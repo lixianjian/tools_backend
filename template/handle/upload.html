@@ -1,0 +1,44 @@
+<div id="upload">
+	<form  enctype="multipart/form-data" method="POST" action="/upload/?gameid={{ gameid }}&localeid={{ localeid }}">{% csrf_token %}
+		{% for index,data in upload_data.items %}
+			<fieldset>
+			<legend style="font:'宋体'; color:#8000FF">{{ index }}</legend>
+			<p><span class="intro">上传资源：</span><input type="file" name="fname{{ index }}" style="width:550px;" /></p>
+			<p><span class="intro">资源类型：</span>
+			<select name="catalog_id{{ index }}">
+				{% for res_catalog, v in res_catalogs.items %}
+					{% ifequal res_catalog data.select_catalog %}
+				 		<option value="{{ res_catalog }}" selected="selected">{{ v.catalog_name }}</option>
+				 	{% else %}
+	            		<option value="{{ res_catalog }}">{{ v.catalog_name }}</option>
+	            	{% endifequal %}
+	            {% endfor %}
+	        </select>
+			<p><span class="intro">资源描述：</span><input type="text" name="res_describ{{ index }}" value="{{ data.res_descrip }}" /></p>
+			<p>
+				{% if data.fname %}
+					<span style="font:'宋体'; color:#FF0000">上传文件: {{ data.fname }}</span></p>
+					<span style="font:'宋体'; color:#FF0000">RESID: {{ data.res_id }}</span></p>
+					<span>预览:</span><br/>
+					<EMBED src="{{ data.upload_file }}" width='75' height='75' wmode='transparent' menu='false' quality='high' type='application/x-shockwave-flash'></EMBED>
+					<br/>
+				{% endif %}
+			</p>
+			
+			{% if data.tips %}
+				<p><span style="font:'宋体'; color:#FF0000">{{ data.tips }}</span></p>
+			{% endif %}
+			
+			</fieldset>
+		{% endfor %}
+		
+		<p><input class="submit_btn" type="submit" value="上传文件" /></p>
+	</form>
+	
+	<p>
+		{% if tips %}
+			{{ tips }}
+		{% endif %}
+	</p>
+</div>
+

@@ -1,0 +1,99 @@
+<div class="panel panel-default">
+<!-- Default panel contents -->
+{% if do_what == 'get' %}
+	<div class="panel-heading">
+		{%include 'amazon/table_nav.html' %}
+	</div>
+	
+	<!--
+	<nav>
+	  <ul class="pagination pagination-sm">
+	  	<li class="disabled"><a href="#">&laquo;</a></li>
+	  	<li><a href="#"><</a></li>
+	    <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+	    <li><a href="#">></a></li>
+	    <li><a href="#">&raquo;</a></li>
+	  </ul>
+	</nav>
+	-->
+	<div class="table-responsive">
+		<table class="table table-bordered">
+			<tr>
+				<th>编辑</th>
+				<th>合作方</th>
+				<th>充值金额</th>
+				<th>单号</th>
+				<th>充值时间</th>
+				<th>删除</th>
+			</tr>
+			{% for data in datas %}
+				<tr>
+					<!-- 编辑 -->
+					<td>
+				    	<!-- <a href="/{{ app }}/{{ view_func.name }}/modify/?recordid={{ data.id }}&page={{ datas.number }}">编辑</a> -->
+				    </td>
+					<!-- 合作方 -->
+				    <td>{{ data.partner.last_name }}{{ data.partner.first_name }}</td>
+				    <!-- 项目 -->
+				    <td>{{ data.money }}</td>
+				    <!-- 单号 -->
+				    <td>{{ data.tid }}</td>
+				    <!-- 充值时间 -->
+				    <td>{{ data.create|date:"Y-m-d H:i:s" }}</td>
+				    <!-- 其他操作 -->
+				    <td>
+				    	{% if perms.auth.not_delete %}
+				    	{% else %}
+				    		<a href="/{{ app }}/{{ view_func.name }}/delete/?recordid={{ data.primary_id }}&page={{ datas.number }}">删除</a>
+				    	{% endif %}
+				    	<!-- <a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.markid }}/?do_what=preview&recordid={{ data.primary_id }}">预览</a> -->
+				    </td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{% else %}
+	<div class="panel-heading">
+		{% if do_what == 'add' %}
+			添加
+		{% else %}
+			修改
+		{% endif %}
+		{{ view_func.intro }}
+	</div>
+	<form class="form-horizontal" role="form" action="{{ form_action }}" method="post" style="margin-top:5px;">{%csrf_token%}
+        <div class="form-group">
+          <label for="name" class="col-sm-2 control-label">合作方:</label>
+          <div class="col-sm-2">
+          	<input id="id_id" name="id" value="{{ datas.id|default:'0' }}" type="hidden" />
+            <select class="form-control" id="id_partner" name="partner">
+              <option value='0'>请选择合作方</option>
+				{% for u1 in users %}
+					{% if u1.id == datas.partner.id %}
+						<option value='{{ u1.id }}' selected='selected'>{{ u1.last_name }}{{ u1.first_name }}</option>
+					{% else %}
+			        	<option value='{{ u1.id }}'>{{ u1.last_name }}{{ u1.first_name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="money" class="col-sm-2 control-label">金额:</label>
+          <div class="col-sm-2">
+            <input type="text" class="form-control" id="id_money" name="money" value="{{ datas.money|default:'0.0' }}">
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="surepassword" class="col-sm-2 control-label"><button type="submit" class="btn btn-default">提交</button></label>
+          <div class="col-sm-10">
+	          {% if tips %}
+			  	<span style="color:#F00;">{{ tips }}</span>
+			  {% endif %}
+		  </div>
+        </div>
+	</form>
+{% endif %}
+</div>

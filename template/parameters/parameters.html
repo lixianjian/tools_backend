@@ -1,0 +1,736 @@
+<script LANGUAGE="JavaScript">
+// Example: obj = findObj("image1");
+function findObj(theObj, theDoc)
+{ 
+	var p, i, foundObj; 
+	if(!theDoc)
+		theDoc = document; 
+	if((p = theObj.indexOf("?")) > 0 && parent.frames.length) {   
+		theDoc = parent.frames[theObj.substring(p+1)].document;
+		theObj = theObj.substring(0,p);
+	}
+	if(!(foundObj = theDoc[theObj]) && theDoc.all)
+		foundObj = theDoc.all[theObj];
+	for (i=0; !foundObj && i < theDoc.forms.length; i++)
+		foundObj = theDoc.forms[i][theObj];
+	for(i=0; !foundObj && theDoc.layers && i < theDoc.layers.length; i++)
+		foundObj = findObj(theObj,theDoc.layers[i].document);
+	if(!foundObj && document.getElementById)
+		foundObj = document.getElementById(theObj);
+	return foundObj;
+}
+
+function check_json(tag_id,tag_name,tips) {
+	var tag_obj = findObj(tag_id,document);
+	var val1 = tag_obj.value;
+	if (val1 == "") {
+		tag_obj.value = "[]";
+		alert("JSON字符串为空");
+		return false;
+	}
+	else {
+		var j = val1;
+		try {
+			j = JSON.parse(val1);
+		} catch (e) {
+			alert(tag_name+"：【"+val1+"】不是正确的JSON字符串，请检查");
+			return false;
+		}
+		/*for (var i=j.length-1; i>=0; i--){
+			var j_type = typeof(j[i]);
+			//alert(j_type);
+			if (j_type == "object"){
+				alert("JSON数组中不能有字典、数组类型");
+				return false;
+			}
+		}*/
+		if (tips != null) {
+			tips = "JSON格式正确"+tips;
+		}
+		else {
+			tips = "JSON格式正确";
+		}
+		if (confirm(tips)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+}
+
+var foreigns = JSON.parse('{{ foreigns|safe }}');
+
+//添加行
+function AddSignRow(frame,trlastindex,trname,tb_name,field_name){
+	//alert(frame);
+	//alert("trlastindex："+trlastindex);
+	//读取最后一行的行号，存放在txtTRLastIndex文本框中 
+	var txtTRLastIndex = findObj(trlastindex,document);
+	var rowID = parseInt(txtTRLastIndex.value);
+	//alert(rowID);
+	var signFrame = findObj(frame,document);
+	//alert(signFrame);
+	//添加行
+	var newTR = signFrame.insertRow(signFrame.rows.length);
+	newTR.id = trname + rowID;
+	
+	//操作字段所在索引
+	var lastTdIndex = 0;
+	//添加列:序号
+	var newNameTD=newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	newNameTD.innerHTML = newTR.rowIndex.toString();
+	
+	//添加列:外键
+	var newForeignTD=newTR.insertCell(lastTdIndex++);
+	//alert(foreigns);
+	var v1 = foreigns[tb_name];
+	//添加列内容
+	var html1 = "";
+	
+	var html1 = "<select name='"+ field_name + rowID + "' id='id_" + field_name + rowID + "' style='width:150px;height:20px;'>";
+	html1 += "<option value='0'>请选择一个值</option>";
+	for (var i1 = 0; i1 < v1.length; i1++) {
+		html1 += "<option value='" + v1[i1][0] + "'>" + v1[i1][1] + "</option>";
+	}
+    html1 += "</select>";
+	newForeignTD.innerHTML = html1;
+	
+	//添加列:删除按钮
+	var newDeleteTD=newTR.insertCell(lastTdIndex);
+	//添加列内容
+	newDeleteTD.innerHTML = "<div align='center' style='width:40px'><a href='javascript:;' onclick=\"DeleteSignRow('"+frame+"','"+trname+rowID+"','id_"+field_name+'_status'+rowID + "')\">删除</a></div>";
+	
+	//将行号推进下一行
+	txtTRLastIndex.value = (rowID + 1).toString();
+	//alert(txtTRLastIndex.value);
+}
+
+//删除指定行
+function DeleteSignRow(frame,rowid){
+	var signFrame = findObj(frame,document);
+	var signItem = findObj(rowid,document);
+	
+	//获取将要删除的行的Index
+	var rowIndex = signItem.rowIndex;
+	
+	//删除指定Index的行
+	signFrame.deleteRow(rowIndex);
+	
+	//重新排列序号，如果没有序号，这一步省略
+	for(i=rowIndex;i<signFrame.rows.length;i++){
+		signFrame.rows[i].cells[0].innerHTML = i.toString();
+	}
+}
+
+function NoAddClear(frame,trlastindex,trname) {
+	var signFrame = findObj(frame,document);
+	var rowscount = signFrame.rows.length;
+	
+	//循环删除行,从最后一行往前删除
+	for(i=rowscount - 1;i > 0; i--){
+	   signFrame.deleteRow(i);
+	}
+	
+	//重置最后行号为1
+	var txtTRLastIndex = findObj(trlastindex,document);
+	txtTRLastIndex.value = "1";
+}
+
+//清空列表
+function ClearAllSign(frame,trlastindex,trname){
+	if(confirm('确定要清空所有数据吗？')){
+		NoAddClear(frame,trlastindex,trname);
+		//预添加一行
+		AddSignRow(frame,trlastindex,trname);
+	}
+}
+
+var checked = false;
+function checkAll(value) 
+{
+	if (checked)
+		checked = false;
+	else
+		checked = true;
+	var code_Values = document.all[value]; 
+	if(code_Values.length){ 
+		for(var i=0;i<code_Values.length;i++) 
+		{ 
+			code_Values[i].checked = checked; 
+		} 
+	}else{ 
+		code_Values.checked = checked;
+	} 
+}
+
+function is_check(value) 
+{
+	var checked = false;
+	var code_Values = document.all[value]; 
+	if(code_Values.length){ 
+		for(var i=0;i<code_Values.length;i++) 
+		{ 
+			if (code_Values[i].checked){
+				if (confirm("确认要删除？")){
+					return true;
+				}
+				else
+					return false;
+			}
+		} 
+	}
+	alert("请先选择要删除的记录复选框！");
+	return false;
+}
+
+/*
+多选框
+*/
+function GetInventory(elem_ids)
+{	
+	//alert(elem_ids);
+	var elems = elem_ids.split(",");
+	for (var i=0; i< elems.length; i++) {
+		var s1 = document.getElementById(elems[i]);
+		var s1Val = "";
+		for (var x=0;x<s1.length;x++)
+		{
+			if (s1[x].selected)
+			{
+				//alert(test_form.s1[x].value);
+				s1Val = s1[x].value + "," + s1Val;
+			}
+		}
+		$('#'+elems[i]+'_selected').val(s1Val);
+		//var selected_elem_obj = findObj(elems[i]+'_selected',document);
+		//selected_elem_obj.value	= s1Val;
+		//alert(selected_elem_obj.value);
+		//alert(selected_elem_obj.value);
+	}
+}
+
+function multi_a_click(elem_id, action){
+	//alert(elem_id);
+	//alert(action);
+	$('#'+elem_id).multiSelect(action);
+}
+
+$(document).ready(function() {
+	//select控件多选
+	var multis	= $('.multi');
+	for(var i=0; i<multis.length; i++) {
+		$('#'+multis[i]['id']).multiSelect({
+			selectableFooter: '<div class="text-center"><a href="javascript:void();" class="select-all" onclick="javascript:multi_a_click(\''+multis[i]['id']+'\',\'select_all\');return false;">全选</button></div>',
+	  		selectionFooter: '<div class="text-center"><a href="javascript:void();" class="deselect-all" onclick="javascript:multi_a_click(\''+multis[i]['id']+'\',\'deselect_all\');return false;">删除全部</a></div>',
+			afterSelect: function(values){
+  				GetInventory(this.$element.attr("id"));
+			},
+			afterDeselect: function(values){
+				GetInventory(this.$element.attr("id"));
+			}
+		});
+	}
+	
+	//数据表处理
+	//数据表参数
+    var tb_params = {"language": {
+				      	"url": "/media/DataTables-1.10.6/media/loc/Chinese.json"				      	
+				      }
+				    };
+    //固定表头参数
+    var fh_params = {"left": true};
+    var table = $('#view_table').DataTable(tb_params);
+    new $.fn.dataTable.FixedHeader(table, fh_params);
+});
+
+/*
+var version="10.0";
+var attributes={"quality":"high","wmode":"opaque", "allowScriptAccess":"always", "id":"dhh", "name":"dhh"};
+function getSwf(movieName)
+{
+	if (window.document[movieName])
+	{
+		return window.document[movieName];
+	}
+	if (navigator.appName.indexOf("Microsoft") == -1)
+	{
+		if (document.embeds && document.embeds[movieName])
+		{
+			return document.embeds[movieName];
+		}
+	}
+	else
+	{
+		return document.getElementById(movieName);
+	}
+}
+
+var flashvars = {
+					"data_url": "http://220.dhh.darkhutgame.net:8080/artres/cgame/loc"
+					//"foreigns": foreigns
+				};
+
+function fkFlash(){
+	swfobject.embedSWF("/media/swf/{{ full_screen_swf_name }}","swf",'1130','930','10.0',"expressInstall.swf",flashvars,{"allowFullScreenInteractive":"true"});
+}
+window.onload = fkFlash;
+
+var action = 'get';
+
+//获取
+function get_record(data){
+	//var table = arguments[0] ? arguments[0] : '';
+  	//var id = arguments[1] ? arguments[1] : 0;
+	var table = data['table'];
+	var id = data['id'];
+	action = 'get';
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=get&reqmode=js&recordid='+id.toString(),
+		type:'get',
+		dataType:'json',
+		data:'',
+		success:record_callback
+	});
+}
+
+//添加
+function add_record(data){
+	//alert(data);
+	var table = data['table'];
+	action = 'add';
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=add&reqmode=js',
+		type:'post',
+		dataType:'json',
+		data:data,
+		success:record_callback
+	});
+}
+
+//修改
+function update_record(data){
+	//alert(data);
+	action = 'update';
+	var table = data['table'];
+	var id = data['id'];
+	//var id = data["id"].toString();
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=modify&recordid='+id.toString()+'&reqmode=js',
+		type:'post',
+		dataType:'json',
+		data:data,
+		success:record_callback
+	});
+}
+
+//删除
+function delete_record(data){
+	action = 'delete';
+	var table = data['table'];
+	var id = data['id'];
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=delete&recordid='+id.toString()+'&reqmode=js',
+		type:'get',
+		dataType:'json',
+		data:{},
+		success:record_callback
+	});
+}
+
+//接受返回
+function record_callback(datas)
+{	
+	var flash = document.getElementById("swf");
+	var ret; 
+	if (datas == null){
+		//alert("fail, return message is none");
+		if (action == 'get'){
+			//return [];
+			ret = [];
+		}
+		else{
+			//return false;
+			ret = false;
+		}
+	}
+	else if (datas["tips"] != "") {
+		//alert("tips"+datas["tips"]);
+		if (action == 'get'){
+			alert(tips);
+			//return [];
+			ret = [];
+		}
+		else{
+			//return false;
+			ret = false;
+		}
+	}
+	else {
+		//alert("success");
+		if (action == 'get'){
+			//alert(datas['datas'][0]['id']);
+			//return datas['datas'];
+			ret = datas['datas'];
+		}
+		else{
+			//return true;
+			ret = true;
+		}
+	}
+	if (action == 'get'){
+		flash.get_record(ret);
+	}
+	else if (action == 'add'){
+		flash.add_record(ret);
+	}
+	else if (action == 'add'){
+		flash.update_record(ret);
+	}
+	else if (action == 'add'){
+		flash.delete_record(ret);
+	}
+	else {
+		alert('未知调用方法');
+	}
+}
+
+//接受返回
+function visitcallback(datas)
+{	
+	//alert(datas);
+	return datas;
+}
+
+function test_func(){
+	//获取数据
+	get_record('errorcode',15);
+	//增加记录
+	//add_record('errorcode',{'sn': 16, 'info': 'test2', 'error_id': 1002});
+	//修改记录
+	//update_record('errorcode',15,{'sn': 14, 'info': 'test3', 'error_id': 1003});
+	//删除记录
+	//delete_record('errorcode',1);
+	var flash = document.getElementById("swf");
+	flash.test_func(true);
+}
+/
+function test_func(data){
+	//获取数据
+	//get_record('errorcode',15);
+	//增加记录
+	//add_record('errorcode',{'sn': 16, 'info': 'test2', 'error_id': 1002});
+	//修改记录
+	//update_record('errorcode',15,{'sn': 14, 'info': 'test3', 'error_id': 1003});
+	//删除记录
+	//delete_record('errorcode',1);
+	alert(data);
+	var flash = document.getElementById("swf");
+	flash.test_func(true);
+}
+*/
+
+//在修改公式之后直接重新生成数据
+function reset_data(){
+	$('#id_working').html('正在执行，请稍候 ...');
+	$('#id_show_table').hide();
+	var params = "reqmode=js&table={{ sheet.name }}";
+	$.ajax({
+		url: "/parameters/{{ program.markid }}/{{ locale.markid }}/reset_data/",
+		type:'get',
+		dataType:'json',
+		data:params,
+		success:callback_reset_data
+	});
+}
+
+function callback_reset_data(data){
+	//alert(data);
+	var ret = data["ret"];
+	var html_str = ""; 
+	if (ret == 0 ){//执行成功，下载数据
+		location.reload();
+		//alert("成功");
+	}
+	else{
+		$('#id_working').html("");
+		$('#id_show_table').show();
+		alert(data["msg"]);
+		if (data["msg"])
+			alert(data["msg"]);
+		else
+			alert("重新生成失败");
+	}
+}
+
+//字典数组增加新记录
+function save_record(table, params_str, display, obj_name) {
+	var params = params_str.split(",");
+	var params2 = {};
+	for (var i=0; i < params.length; i++) {
+		var key = params[i]
+		if (key == 'sn') 
+			continue
+		//alert(key);
+		var fobj = document.getElementById('id_'+table+'_'+key);
+		//var value = fobj.value;
+		//alert(value);
+		params2[key] = fobj.value;
+		fobj.value = "";
+	}
+	//添加
+	//alert(data);
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=add&reqmode=js',
+		type: 'post',
+		dataType: 'json',
+		data: params2,
+		success: function (ret){
+			//往多选列表中添加记录
+			//alert(ret['tips']);
+			//alert(ret['datas']);
+			//添加下拉列表项
+			//$("#"+obj_name).append( new Option(ret['datas'][0][display],ret['datas'][0]['primary_id']) );
+			//$("#"+obj_name).trigger("liszt:updated");
+			//$("#"+obj_name).multiselectable();
+			$("#"+obj_name).multiSelect('addOption', { value: ret['datas'][0]['primary_id'], text: ret['datas'][0][display]});//, index: 0, nested: 'optgroup_label' 
+			$("#id_"+table+"_modal").modal("hide");
+		}
+	})/**/;
+}
+
+//添加行
+function add_raw(datas){
+	var signFrame = findObj("id_odds_frame",document);
+	//alert(signFrame);
+	//alert(datas.length);
+	//读取最后一行的行号，存放在txtTRLastIndex文本框中 
+	var txtTRLastIndex = findObj("id_odds_index",document);
+	for (var k=0; k<datas.length; k++) {
+		//添加行
+		var newTR = signFrame.insertRow(signFrame.rows.length);
+		var rowID = newTR.rowIndex;
+		//最后一个单元格索引值
+		var lastTdIndex = 0;
+		//添加列:序号
+		var newIDTD=newTR.insertCell(lastTdIndex++);
+		//添加列内容
+		newIDTD.innerHTML = rowID.toString();
+		
+		//添加列:稀有度
+		var newRareTD=newTR.insertCell(lastTdIndex++);
+		//添加列内容
+		newRareTD.innerHTML = "<input name='odds_rare" + rowID + "' id='id_odds_rare" + rowID + "' type='text' style='width:100px;' value='"+ datas[k]['rare'] +"' type='text' readonly='readonly' />";
+		
+		//添加列:卡片数量
+		var newLenTD=newTR.insertCell(lastTdIndex++);
+		//添加列内容
+		newLenTD.innerHTML = "<span>"+ datas[k]['card_len'] +"<span>";
+		
+		//添加列:掉率
+		var newOddsTD=newTR.insertCell(lastTdIndex++);
+		//添加列内容
+		newOddsTD.innerHTML = "<input name='odds_odds" + rowID + "' id='id_odds_odds" + rowID + "' type='text' style='width:100px;' value='0' />";
+		
+		//添加列:卡片
+		var newCardTD=newTR.insertCell(lastTdIndex++);
+		//添加列内容
+		var html2 = "";
+		//var k2 = 0;
+		//alert(k2);
+		for(var m=0;m<datas[k]['cards'].length;m++){
+			html2 += '<label style="width:120px;float:left;background-color:#CCC;margin-right:2px;margin-bottom:2px;padding-left:5px;">';
+			html2 += '<input type="checkbox" checked="checked" value="'+datas[k]['cards'][m]['sn']+'" id="id_odds_card'+rowID+'_'+datas[k]['cards'][m]['sn']+'" name="odds_card'+rowID+'" />';
+			html2 += '<span style="color:#000;">&nbsp;'+datas[k]['cards'][m]['name']+'</span>';
+	 		html2 += '</label>';
+	 	}
+	 	newCardTD.innerHTML = html2;
+		txtTRLastIndex.value = rowID+1;
+	}
+}
+
+var conds	= JSON.parse('{{ conds|safe }}');
+//获取
+function write_rare(){
+	//读取归类条件
+	var condition = {};
+	for (var i=0; i< conds.length; i++)
+	{
+		var d1 = {};
+		var obj = findObj("id_"+conds[i], document);
+		//alert(obj);
+		if (obj == null | obj.value == "0") {
+			alert("筛选条件不能为空");
+			return false;
+		}
+		condition[conds[i]] = obj.value;
+		//alert(obj.value);
+	}
+	//alert(condition);
+	if (condition.length < 1){
+		alert("你尚未填写归类条件");
+		return false;
+	}
+	//获取卡片数据
+	action = 'get';
+	$.ajax({
+		url: '/parameters/get_card_sets/{{ filters.inst_name }}/{{ filters.inst_field }}/',
+		type:'post',
+		dataType:'json',
+		data: {'condition': JSON.stringify(condition)},
+		success:cards_callback
+	});
+}
+
+//接受返回
+function cards_callback(datas)
+{	
+	if (datas == null | datas.length == 0){
+		alert('没有相应数据，如确定筛选条件无误，请联系管理员');
+		return false;
+	}
+	else {
+		if (ClearAllSign2("id_odds_frame","id_odds_index","")){
+			add_raw(datas);
+		}
+	}
+}
+
+//清空列表
+function ClearAllSign2(frame,trlastindex,trname){
+	var signFrame = findObj(frame,document);
+	var rowscount = signFrame.rows.length;
+	if (rowscount < 2) {
+		if (trname != "") {
+			alert("没有可删除的记录");
+		}
+		return true;
+	}
+	if(confirm('确定要清空所有记录吗？')){
+		//循环删除行,从最后一行往前删除
+		for(i=rowscount - 1;i > 0; i--){
+		   signFrame.deleteRow(i);
+		}
+		
+		//重置最后行号为1
+		var txtTRLastIndex = findObj(trlastindex,document);
+		txtTRLastIndex.value = "1";
+		
+		//预添加一行
+		if (trname != "") {
+			AddSignRow(frame,trlastindex,trname);
+		}
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+</script>
+{% if do_what == 'get' %}
+	<div>
+		<div id="id_working"></div>
+		<div id="id_show_table">
+			{% if sheet.formula %}
+			<p style="margin-bottom:10px;">
+				<button class="submit_btn" onclick="javascript: reset_data();">重新生成{{ sheet.intro }}表</button>
+			</p>
+			{% endif %}
+			<form action="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what=delete&page={{ page }}&jspost=1" method="post" style="clear: both; zoom: 1;">{%csrf_token%}
+				<p style="float:right;margin-bottom:10px;">
+					<input type="submit" class="submit_btn" onclick="javascript: return is_check('recordids');" value="删除记录"/>
+				</p>
+				<p>
+					<table id="view_table" class="display" cellspacing="0" width="100%">
+						<thead>
+							<tr>
+							<th>编辑</th>
+							<th>ID(id)</th>
+						{% for field in title %}
+							<th>{{ field|safe }}</th>
+						{% endfor %}
+							<th>删除</th>
+							<th>多选</th>
+							</tr>
+						
+						<tr>
+							<th></th>
+							<th>id</th>
+						{% for pkey in pkeys %}
+							<th>{{ pkey }}</th>
+						{% endfor %}
+							<th></th>
+							<th><a href="javascript:void();" onclick="javascript:checkAll('recordids')">全选</a></th>
+						</tr>
+						</thead>
+						<tbody>
+						{{ temp_html|safe }}
+						</tbody>
+					</table>
+					
+				</p>
+				
+			</form>
+		</div>
+		{{ temp_html2|safe }}
+		<div id="form_table">
+			<form action="/parameters/{{ program.markid }}/{{ locale.markid }}/import_excel/" method="post" enctype="multipart/form-data">{%csrf_token%}
+				<table style="border:1px solid <!-- 000;" class="regist_table">
+					<tr>
+			    		<td class="right_td">Excel文件：</td>
+			    		<td class="left_td">
+			    			<p>
+			    				<input type="hidden" name="table" id="id_table" value="{{ sheet.name }}" />
+				            	<input type="file" name="ex_file" id="id_ex_file" style="width:250px;"  accept=".xlsx" />
+				            </p>
+				            <p>
+				            	<b>文件规则：</b>
+								<ol>
+									<li>&nbsp;&nbsp;&nbsp;&nbsp;1.文件必须是07版excel文件（后缀名为.xlsx）；</li>
+									<li>&nbsp;&nbsp;&nbsp;&nbsp;2.表中需要注释的行，行第一个单元格中用“;”标识；</li>
+									<li>&nbsp;&nbsp;&nbsp;&nbsp;3.如果表中存在sn字段，sn必须是自增的，且必须从已有记录最后一条记录sn+1开始；</li>
+									<li>&nbsp;&nbsp;&nbsp;&nbsp;4.如果表中存在外键字段，那么必须在外加字段名后加上“_id”标识这是外键；</li>
+								</ol>
+							</p>
+			    		</td>
+			    	</tr>
+					<tr>
+			    		<td class="right_td"><input type='submit' value='提交' class="btn" /></td>
+			    		<td class="left_td">
+			    			{% if tips %}
+								<span style="color:#F00;">{{ tips|safe }}</span>
+							{% endif %}
+			    		</td>
+			    	</tr>
+			    </table>
+			</form>
+		</div>
+	</div>
+{% else %}
+	<!-- 测试JS增删改表记录 -->
+	<!-- <p><a href="javascript:void();" onclick="javascript:test_func();">测试</a></p> -->
+	<!-- swf -->
+	{% if full_screen_swf %}
+		<div id="swf" onclick="javascript:">
+			<!-- <EMBED src="/media/swf/{{ full_screen_swf_name }}" width='1130' height='930' wmode='transparent' menu='false' quality='high' type='application/x-shockwave-flash'></EMBED> -->
+		</div>
+	{% else %}
+		<div id="form_table">
+			<form action="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what={{ do_what }}&recordid={{ recordid }}&page={{ page }}&jspost=1" method="post">{%csrf_token%}
+				<table style="border:1px solid <!-- 000;" class="regist_table">
+					{{ temp_html|safe }}
+			    	<tr>
+			    		<td class="right_td"><input type='submit' value='提交' class="btn" onclick="{{ js_str|safe }}"/></td>
+			    		<td class="left_td">
+			    			{% if tips %}
+								<span style="color:#F00;">{{ tips }}</span>
+							{% endif %}
+			    		</td>
+			    	</tr>
+				</table>
+		    </form>
+		</div>
+		{{ temp_html2|safe }}
+	{% endif %}
+{% endif %}

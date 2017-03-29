@@ -1,0 +1,56 @@
+<nav class="navbar navbar-default navbar-static-top" role="navigation"> <!--  style="background: rgba(0,0,0,0.6);top:0;" -->
+  <div class="container" style="padding-left: 0px;padding-right: 0px;">
+    <div class="navbar-header">
+        <img src="/media/images/acewebgame_logo_middle.png" alt="小黑屋游戏" class="img-thumbnail">
+      <!-- <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+      data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">{{ sys_title }}</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/index.php">{{ sys_title }}</a>
+      -->
+    </div>
+    
+    <div id="navbar" class="navbar-collapse collapse">
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Settings</a></li>
+        <li><a href="#">Profile</a></li>
+        <li><a href="#">Help</a></li>
+      </ul>
+      <form class="navbar-form navbar-right">
+        <input type="text" class="form-control" placeholder="Search...">
+      </form>
+      -->
+      {% if user %}
+      	
+		<ul class="nav navbar-nav navbar-right">
+			<li><span class="navbar-text navbar-right">欢迎，<b>{{ user.last_name}}{{ user.first_name }}</b> &nbsp;&nbsp;</span></li>
+			<li><a href="/quity/">退出</a></li>
+			<!--
+			<li class="dropdown">
+	          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.last_name}}{{ user.first_name }} <span class="caret"></span></a>
+	          <ul class="dropdown-menu" role="menu">
+	            <li><a href="/quit">退出</a></li>
+	          </ul>
+	        </li>
+	         -->
+	      </ul>
+      {% else %}
+	      <form class="navbar-form navbar-right" role="form">
+	        <div class="form-group">
+	          <input type="text" placeholder="Email" class="form-control">
+	        </div>
+	        <div class="form-group">
+	          <input type="password" placeholder="Password" class="form-control">
+	        </div>
+	        <button type="submit" class="btn btn-success">登录</button>
+	      </form>
+	  {% endif %}
+    </div>
+    <!--/.navbar-collapse -->
+  </div>
+</nav>

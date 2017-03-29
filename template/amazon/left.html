@@ -1,0 +1,16 @@
+
+<div class="col-sm-3 col-md-2 sidebar">
+	<ul class="nav nav-sidebar">
+	    {% for func in funcs %}
+	    	{% if func.name == view_func.name %}
+		    	<li class="active">
+			    	<a href="/{{ app }}/{{ func.name }}/">{{ func.intro }} <span class="sr-only">(current)</span></a>
+			    </li>
+		    {% else %}
+		    	<li>
+			    	<a href="/{{ app }}/{{ func.name }}/">{{ func.intro }}</a>
+			    </li>
+		    {% endif %}
+		{% endfor %}
+	</ul>
+</div>

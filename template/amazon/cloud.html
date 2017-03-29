@@ -1,0 +1,229 @@
+<div class="panel panel-default">
+<!-- Default panel contents -->
+{% if do_what == 'get' %}
+	<div class="panel-heading">
+		{%include 'amazon/table_nav.html' %}
+	</div>
+	
+	
+	<div class="table-responsive">
+		<table class="table table-bordered">
+        	<thead>
+				<tr>
+					<th>编辑</th>
+					<th>项目</th>
+					<th>使用时长</th>
+					<th>实例</th>
+					<th>预留实例发售类型</th>
+					<th>平台（操作系统） </th>
+					<th>逻辑服价格</th>
+					<th>空闲逻辑服数量</th>
+					<th>状态</th>
+					<th>申请时间</th>
+					<th>操作人</th>
+					<th>操作时间</th>
+					<th>删除</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for data in datas %}
+					<tr>
+						<!-- 编辑 -->
+						<td>
+					    	<a href="/{{ app }}/{{ view_func.name }}/modify/?recordid={{ data.id }}&page={{ datas.number }}">编辑</a>
+					    </td>
+						<!-- 项目 -->
+					    <td>{{ data.program.name }}</td>
+					    <!-- 使用时长 -->
+					    <td>{{ data.duration.name }}</td>
+					    <!-- 实例 -->
+					    <td>{{ data.inst.ri_id }}</td>
+					    <!-- 预留实例发售类型 -->
+					    <td>{{ data.ri_offer.name }}</td>
+					    <!-- 平台（操作系统） -->
+					    <td>{{ data.platform.name }}</td>
+					    <!-- 逻辑服价格 -->
+					    <td>{{ data.logic_price.intro }}</td>
+					    <!-- 空闲逻辑服数量 -->
+					    <td>{{ data.freedom }}</td>
+					    <!-- 状态 -->
+					    <td>{{ data.status.name|default:"" }}</td>
+					    <!-- 申请时间 -->
+					    <td>{{ data.create2|date:"Y-m-d H:i:s" }}</td>
+					    <!-- 操作人 -->
+					    <td>{{ data.operator.last_name }}{{ data.operator.first_name }}</td>
+					    <!-- 操作时间 -->
+					    <td>{{ data.create|date:"Y-m-d H:i:s" }}</td>
+					    <!-- 其他操作 -->
+					    <td>
+					    	{% if perms.auth.not_delete %}
+					    	{% else %}
+					    		<a href="/{{ app }}/{{ view_func.name }}/delete/?recordid={{ data.primary_id }}&page={{ datas.number }}">删除</a>
+					    	{% endif %}
+					    	<!-- <a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.markid }}/?do_what=preview&recordid={{ data.primary_id }}">预览</a> -->
+					    </td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% else %}
+	<script>
+		var fields = [['program','项目'], ['duration','使用时长'], ['ri_offer','预留实例发售类型'], ['platform','平台（操作系统）'], ['logic_price','逻辑服价格'], ['status', '状态']];
+		function check_params() {
+			//alert("in check_params");
+			for (var i=0; i < fields.length; i++) {
+				//fobj = $("#id"+fields[i][0]);
+				//alert(fields[i][0]);
+				//alert($("#id_"+fields[i][0]).val());
+				var value = $("#id_"+fields[i][0]).val();
+				if (value == "0" | value == "" | value == null) {
+					alert(fields[i][1]+"为空，请先填写");
+					return false;
+				}
+			}
+			return true;
+		}
+	</script>
+	<div class="panel-heading">
+		{% if do_what == 'add' %}
+			添加
+		{% else %}
+			修改
+		{% endif %}
+		{{ view_func.intro }}
+	</div>
+	<form class="form-horizontal" role="form" action="{{ form_action }}" method="post" style="margin-top:5px;">{%csrf_token%}
+		<div class="form-group">
+          <label for="program" class="col-sm-2 control-label">项目:</label>
+          <div class="col-sm-3">
+          	<input id="id_id" name="id" value="{{ datas.id|default:'0' }}" type="hidden" />
+            <select class="form-control" id="id_program" name="program">
+              <option value='0'>请选择项目</option>
+				{% for prog in progs %}
+					{% if prog.id == datas.program.id %}
+						<option value='{{ prog.id }}' selected='selected'>{{ prog.name }}</option>
+					{% else %}
+			        	<option value='{{ prog.id }}'>{{ prog.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+		<div class="form-group">
+          <label for="duration" class="col-sm-2 control-label">使用时长:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_duration" name="duration">
+              <option value='0'>请选择使用时长</option>
+              {% for duration in durations %}
+					{% if duration.id == datas.duration.id %}
+						<option value='{{ duration.id }}' selected='selected'>{{ duration.name }}</option>
+					{% else %}
+			        	<option value='{{ duration.id }}'>{{ duration.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group"  style="display:none;">
+          <label for="inst" class="col-sm-2 control-label">实例:</label>
+          <div class="col-sm-3">
+            <input id="id_inst" name="inst" style="width:150px;" value="{{ datas.inst.id|default:'0' }}" />
+			<input id="id_price" name="price" style="width:150px;" value="{{ datas.price|default:'0' }}" />
+			<input id="id_tid" name="tid" style="width:150px;" value="{{ datas.tid|default:'' }}" type="text" />
+			<input id="id_svrid" name="tid" style="width:150px;" value="{{ datas.tid|default:'0' }}" type="text" />
+			<input class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="id_create2" name="create2"  style="width:150px;" value="{{ datas.create2|safe|default:'' }}" />
+			<input id="id_domain" name="domain" style="width:150px;" value="{{ datas.domain|default:'' }}" />
+			<input id="id_gpf" name="gpf" style="width:150px;" value="{{ datas.gpf.id|default:'1' }}" />
+          </div>
+        </div>
+        <hr/>
+	    <div class="form-group">
+          <label for="ri_offer" class="col-sm-2 control-label">预留实例发售类型:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_ri_offer" name="ri_offer">
+              <option value='0'>请选择预留实例发售类型</option>
+				{% for offering_type in offering_types %}
+					{% if offering_type.id == datas.ri_offer.id %}
+						<option value='{{ offering_type.id }}' selected='selected'>{{ offering_type.name }}</option>
+					{% else %}
+			        	<option value='{{ offering_type.id }}'>{{ offering_type.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+	    <div class="form-group">
+          <label for="platform" class="col-sm-2 control-label">平台（操作系统）:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_platform" name="platform">
+              <option value='0'>请选择平台</option>
+				{% for platform in platforms %}
+					{% if platform.id == datas.platform.id %}
+						<option value='{{ platform.id }}' selected='selected'>{{ platform.name }}</option>
+					{% else %}
+			        	<option value='{{ platform.id }}'>{{ platform.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+	    <div class="form-group">
+          <label for="logic_price" class="col-sm-2 control-label">逻辑服价格:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_logic_price" name="logic_price">
+              <option value='0'>请选择价格类型</option>
+				{% for logic_price in logic_prices %}
+					{% if logic_price.id == datas.logic_price.id %}
+						<option value='{{ logic_price.id }}' selected='selected'>{{ logic_price.intro }}</option>
+					{% else %}
+			        	<option value='{{ logic_price.id }}'>{{ logic_price.intro }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+	    <div class="form-group" style="display:none;">
+          <label for="freedom" class="col-sm-2 control-label">空闲逻辑服数量:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_freedom" name="freedom" style="width:150px;" value="{{ datas.freedom|default:'0' }}" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="status" class="col-sm-2 control-label">状态:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_status" name="status">
+              <option value='0'>请选择状态</option>
+				{% for status in statuses %}
+					{% if status.id == datas.status.id %}
+						<option value='{{ status.id }}' selected='selected'>{{ status.name }}</option>
+					{% else %}
+			        	<option value='{{ status.id }}'>{{ status.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="submit" class="col-sm-2 control-label">
+          	<button type="submit" class="btn btn-default" name="submit" onclick="javascript:return check_params();">确定购买</button>
+          </label>
+          <div class="col-sm-10">
+              <label for="submit" class="col-sm-2 control-label">
+              	<a href="/amazon/check/">
+              		<button type="button" class="btn btn-default" name="cancel">取消</button>
+              	</a>
+              </label>
+	          {% if tips %}
+			  	<span style="color:#F00;">{{ tips }}</span>
+			  {% endif %}
+		  </div>
+        </div>
+    </form>
+{% endif %}
+</div>

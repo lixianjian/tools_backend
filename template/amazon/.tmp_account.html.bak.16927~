@@ -1,0 +1,33 @@
+<div class="panel panel-info">
+	<div class="panel-heading">
+		<h2><span style="color:#d30128;">账号中心</span></h2>
+	</div>
+	<!-- Default panel contents -->
+	<div class="panel-body">
+		<div class="panel panel-default">
+			<!-- Default panel contents -->
+			<div class="panel-body" style="background:url(/media/images/account-header-bg.jpg); color:white;">
+				<div style="font-size:24px;">
+			        <span style="margin-right:25px;">现金余额</span>
+					<span style="margin-right:25px;">249875.30</span>
+					<span style="margin-right:25px;">总收益率</span>
+					<span style="margin-right:25px;">21.24%</span>
+			    </div>
+				<div style="font-size:16px;">
+					<br/>
+					<br/>
+			        <span>参考市值：</span>
+					<span style="margin-right:25px;">1083728.00</span>
+					<span>总资产：</span>
+					<span style="margin-right:25px;">1333603.30</span>
+					<span>盈亏：</span>
+					<span style="margin-right:25px;">233603.30</span>
+					<span>仓位：</span>
+					<span style="margin-right:25px;">81.26%</span>
+					<span> 排名：</span>
+					<span class="position">24331</span>
+			    </div>
+			</div>
+		</div>
+	</div>
+</div>

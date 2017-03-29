@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>后台登陆</title>
+<style type="text/css">
+
+body {
+	font-family: "Trebuchet MS", Arial, "宋体";
+	font-size:14px;
+	margin:0px;
+	background:#F3F3F3;
+}
+#mian{ 
+	width	:800px; 
+	height	:100%; 
+	overflow:hidden; 
+	margin	:0px auto;
+	background-color:#FFFFFF;
+	}
+#title{ 
+	width	:800px; 
+	height	:100px; 
+	overflow:hidden; 
+	margin	:0px auto;
+	/*background-color:#CCCCCC;*/
+	}
+#title h1{ 
+	text-align:center; 
+	margin-top:35px;
+	}
+#login_form{ 
+	text-align:center;
+	}
+.btn{
+	/*border:0;*/
+	background:url(../media/images/icons.gif) no-repeat -102px -130px;
+	color:#2473A2;
+	width:103px;
+	height:28px;
+	cursor:pointer;
+	font-weight:bold;
+	font-size:14px;
+	}
+#login_button{
+	/*border:0;
+	background:url(../media/images/icons.gif) no-repeat -102px -130px;cursor:pointer;
+	color:#2473A2;*/
+	width:103px;
+	height:28px;	
+	font-weight:bold;
+	font-size:14px;
+	}
+</style>
+</head>
+
+<body>
+<div id="mian">
+	<div id="title">
+		<h1>{{ login_title }}</h1>
+	</div>
+	<div id="login_form">
+    	<form action="{{ form_action }}" method="post">{% csrf_token %}
+			<p style="color:#0099FF">请输入登录的用户名和密码</p>
+			<p>用户名：<input type="text" name="username" /></p>
+			<p>密&nbsp;&nbsp;&nbsp;码：<input type="password" name="password" /></p>
+			{% if tips %}
+				<p style="color:#F00;">{{ tips }}</p>
+			{% endif %}
+			<p>
+				<input type="hidden" value="{{ pre_path|default:'' }}" id="id_pre_path" name="pre_path">
+				<input type="submit" value="登陆" id="login_button"/>
+			</p>
+			<!-- <div class="login_button">
+				<input type="submit" value="登 录"  class="btn" id="login_button" />
+			</div> -->
+        </form>
+    </div>
+	
+</div>
+</body>
+</html>

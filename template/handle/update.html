@@ -1,0 +1,31 @@
+<div id="update">
+	<form enctype="multipart/form-data" method="POST" action="/update/?gameid={{ gameid }}&localeid={{ localeid }}&count={{ count }}">{% csrf_token %}
+		{% for index,data in update_data.items %}
+			<fieldset>
+			<legend style="font:'宋体'; color:#8000FF">{{ data.resid }}</legend>			
+			<p><span class="intro">新文件：</span><input type="file" name="fname{{ index }}" style="width:550px;" /></p>
+			<p><span class="intro">说明(可修改)：</span><input type='text' name='res_descrip{{ index }}' value="{{ data.res_descrip }}" /></p>
+			<p><span class="intro">RESID(只读)：</span><input type='text' name='resid{{ index }}' value="{{ data.resid }}" readonly="readonly" /></p>
+			<p>
+				{% if data.tips %}
+		        	<span style="font:'宋体'; color:#FF0000">{{ data.tips }}</span><br/>
+		        {% endif %}
+		        
+				{% if data.fname %}
+					<span style="font:'宋体'; color:#FF0000">上传文件: {{ data.fname }}</span><br/>
+					<span>预览:</span><br/>
+					<EMBED src="{{ data.update_file }}" width='75' height='75' wmode='transparent' menu='false' quality='high' type='application/x-shockwave-flash'></EMBED>
+					<br/>
+				{% endif %}
+			</p>
+			</fieldset>
+		{% endfor %}
+		
+        <p>
+	        <input type="checkbox" name="copy"/>拷贝(该选项是其他组拷贝第一组的文件，及描述)
+		</p>
+		<input class="submit_btn" type="submit" value="更新文件" />
+	</form>
+	
+</div>
+

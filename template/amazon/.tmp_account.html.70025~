@@ -1,0 +1,106 @@
+<div class="panel panel-info">
+	<div class="panel-heading">
+		<h2><span style="color:#d30128;">账号中心</span></h2>
+	</div>
+	<!-- Default panel contents -->
+	<div class="panel-body">
+		<div style="font-size:24px;">
+	        <span style="margin-right:15px;">{{ month }}</span>
+			<span style="margin-right:15px;">总收入</span>
+			<span style="margin-right:25px;">{{ bonus|default:"0.00" }}</span>
+			<span style="margin-right:15px;">保证金余额</span>
+			<span>{{ balance|default:'0.00' }}</span>
+	    </div>
+		<!-- 
+		<div style="font-size:16px;">
+			<span>参考市值：</span>
+			<span style="margin-right:25px;">1083728.00</span>
+			<span>总资产：</span>
+			<span style="margin-right:25px;">1333603.30</span>
+			<span>盈亏：</span>
+			<span style="margin-right:25px;">233603.30</span>
+			<span>仓位：</span>
+			<span style="margin-right:25px;">81.26%</span>
+			<span> 排名：</span>
+			<span class="position">24331</span>
+	    </div>
+		-->
+		<div class="table-responsive" style="font-size:16px;">
+		<table class="table table-hover">
+        	<thead>
+			<tr>
+				<th></th>
+				<th>项目</th>
+				<th>充值</th>
+				<th>分成比例</th>
+				<th>分成</th>
+				<th>详情</th>
+			</tr>
+			</thead>
+			<tbody>
+				{% for data in datas.values %}
+				<tr>
+					<!-- 编辑 -->
+					<td>{{ forloop.counter }}</td>
+					<!-- 项目 -->
+				    <td>{{ data.name }}</td>
+				    <!-- 充值 -->
+				    <td>{{ data.money }}</td>
+				    <!-- 分成比例 -->
+				    <td>{{ data.proportion }}</td>
+				    <!-- 分成 -->
+				    <td>{{ data.bonus }}</td>
+				    <!-- 详情 -->
+				    <td>
+						<!-- Button trigger modal -->
+						<button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#myModal">
+						  查看
+						</button>
+						
+						<!-- Modal -->
+						<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						  <div class="modal-dialog">
+						    <div class="modal-content">
+						      <div class="modal-header">
+						        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						        <h4 class="modal-title" id="myModalLabel">{{ data.name }}{{ month }}日收入明细</h4>
+						      </div>
+						      <div class="modal-body">
+						      	<div class="table-responsive" style="font-size:14px;">
+									<table class="table table-hover">
+							        	<thead>
+										<tr>
+											<th>日期</th>
+											<th>收入</th>
+										</tr>
+										</thead>
+										<tbody>
+											{% for detail in data.detail %}
+											<tr>
+												<!-- 项目 -->
+											    <td>{{ detail.day|safe }}</td>
+											    <!-- 金额 -->
+											    <td>{{ detail.money }}</td>
+											</tr>
+											{% endfor %}
+										</tbody>
+									</table>
+								</div>
+						      </div>
+						      <div class="modal-footer">
+						        <button type="button" class="btn btn-default" data-dismiss="modal">返回</button>
+						        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+						      </div>
+						    </div>
+						  </div>
+						</div>
+				    </td>
+				</tr>
+				
+				{% endfor %}
+				
+			</tbody>
+		</table>
+	</div>
+	</div>
+</div>

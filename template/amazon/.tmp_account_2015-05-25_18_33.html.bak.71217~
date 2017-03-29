@@ -1,0 +1,180 @@
+<div class="row">
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3><span>预付款余额：$175,600.00</span></h3>
+				<!-- <a class="btn btn-primary" href="#" role="button">充值</a> -->
+			</div>
+			<!-- Default panel contents -->
+			<div class="panel-body">
+				<div>
+					<h4>最近5日预付款消费</h4>
+				</div>
+				<div class="table-responsive" style="font-size:14px;">
+					<table class="table">
+			        	<thead>
+						<tr>
+							<th>日期</th>
+							<th>金额</th>
+						</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<!-- 日期 -->
+								<td>2015-05-25</td>
+								<!-- 金额 -->
+							    <td>$1,750.00</td>
+							</tr>
+							<tr>
+								<!-- 日期 -->
+								<td>2015-05-24</td>
+								<!-- 金额 -->
+							    <td>$1,250.00</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3><span>区间费用情况</span></h3>
+				<!-- <a class="btn btn-primary" href="#" role="button">充值</a> -->
+			</div>
+			<!-- Default panel contents -->
+			<div class="panel-body">
+				<div>
+					<form role="form" id="frmAddUser" action="/api/add_user" method="POST" class="form-horizontal">
+			            <div class="form-group form-group-sm">
+			              	<label class="col-md-3 control-label" style="text-align: left;">选择周期：</label>
+							<div class="col-md-4">
+			              		<div class="form-group">
+					                <div class='input-group date cdate' id="id_start_day">
+					                    <input type='text' class="form-control" name="start_day" value=""/>
+					                    <span class="input-group-addon">
+					                        <span class="glyphicon glyphicon-calendar"></span>
+					                    </span>
+					                </div>
+					            </div>
+							</div>
+							<div class="col-md-1">
+								<span>-</span>
+							</div>
+							<div class="col-md-4">
+			              		<div class="form-group">
+					                <div class='input-group date cdate' id='id_end_day'>
+					                    <input type='text' class="form-control" name="end_day" value=""/>
+					                    <span class="input-group-addon">
+					                        <span class="glyphicon glyphicon-calendar"></span>
+					                    </span>
+					                </div>
+									
+					            </div>
+							</div>
+			            </div>
+						<div class="form-group form-group-sm">
+			              	<label class="col-md-3 control-label" style="text-align: left;">计算单位：</label>
+							<div class="col-md-9">
+			              		<span>$</span>
+							</div>
+			            </div>
+					</form>
+			    </div>
+				<div class="table-responsive" style="font-size:14px;">
+					<table class="table">
+			        	<thead>
+						<tr>
+							<th>日期</th>
+							<th>金额</th>
+						</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<!-- 日期 -->
+								<td>2015-05-25</td>
+								<!-- 金额 -->
+							    <td>$1,750.00</td>
+							</tr>
+							<tr>
+								<!-- 日期 -->
+								<td>2015-05-24</td>
+								<!-- 金额 -->
+							    <td>$1,250.00</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h3><span>每月详单导出</span></h3>
+			<!-- <a class="btn btn-primary" href="#" role="button">充值</a> -->
+		</div>
+		<!-- Default panel contents -->
+		<div class="panel-body">
+			<div>
+				<form role="form" id="frmAddUser" action="/api/add_user" method="POST" class="form-horizontal">
+		            <div class="form-group form-group-sm">
+		              	<label class="col-md-4 control-label" style="text-align: left;">选择周期：</label>
+						<div class="col-md-8">
+		              		<div class="form-group">
+				                <div class='input-group date' id='datetimepicker2'>
+				                    <input type='text' class="form-control" />
+				                    <span class="input-group-addon">
+				                        <span class="glyphicon glyphicon-calendar"></span>
+				                    </span>
+				                </div>
+								<script type="text/javascript">
+						            $(function () {
+						                $('#datetimepicker2').datetimepicker({
+						                    locale: 'zh-cn'
+						                });
+						            });
+						        </script>
+				            </div>
+						</div>
+		            </div>
+				</div>
+		    </div>
+			<div class="table-responsive" style="font-size:14px;">
+				<table class="table">
+		        	<thead>
+					<tr>
+						<th>日期</th>
+						<th>金额</th>
+					</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<!-- 日期 -->
+							<td>2015-05-25</td>
+							<!-- 金额 -->
+						    <td>$1,750.00</td>
+						</tr>
+						<tr>
+							<!-- 日期 -->
+							<td>2015-05-24</td>
+							<!-- 金额 -->
+						    <td>$1,250.00</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            locale: 'zh-cn',
+			format: 'YYYY-MM-DD'
+        });
+    });
+</script>

@@ -1,0 +1,308 @@
+<script LANGUAGE="JavaScript">
+// Example: obj = findObj("image1");
+function findObj(theObj, theDoc)
+{ 
+	var p, i, foundObj; 
+	if(!theDoc)
+		theDoc = document; 
+	if((p = theObj.indexOf("?")) > 0 && parent.frames.length) {   
+		theDoc = parent.frames[theObj.substring(p+1)].document;
+		theObj = theObj.substring(0,p);
+	}
+	if(!(foundObj = theDoc[theObj]) && theDoc.all)
+		foundObj = theDoc.all[theObj];
+	for (i=0; !foundObj && i < theDoc.forms.length; i++)
+		foundObj = theDoc.forms[i][theObj];
+	for(i=0; !foundObj && theDoc.layers && i < theDoc.layers.length; i++)
+		foundObj = findObj(theObj,theDoc.layers[i].document);
+	if(!foundObj && document.getElementById)
+		foundObj = document.getElementById(theObj);
+	return foundObj;
+}
+
+//添加行
+function AddSignRow(frame,trlastindex,trname){
+	//读取最后一行的行号，存放在txtTRLastIndex文本框中 
+	var txtTRLastIndex = findObj(trlastindex,document);
+	var rowID = parseInt(txtTRLastIndex.value);
+	//alert(rowID);
+	var signFrame = findObj(frame,document);
+	//alert(signFrame);
+	//添加行
+	var newTR = signFrame.insertRow(signFrame.rows.length);
+	newTR.id = trname + rowID;
+	
+	//添加列:序号
+	var newNameTD=newTR.insertCell(0);
+	//添加列内容
+	newNameTD.innerHTML = newTR.rowIndex.toString();
+	
+	//操作字段所在索引
+	var lastTdIndex = 1;
+	
+	//添加列：大类型
+	var newTD1 = newTR.insertCell(1);
+	//添加列内容
+	var html1 = "<select name='pc_program" + rowID + "' id='id_pc_program"+ rowID + "' style='width:150px;height:20px;'>";
+	html1 += "<option value='0'>请选择项目</option>";
+	{% for prog in progs %}
+        html1 += "<option value='{{ prog.id }}'>{{ prog.name }}</option>";
+    {% endfor %}
+    html1 += "</select>";
+    newTD1.innerHTML = html1;
+    
+    //添加列:国家
+	var newTD4=newTR.insertCell(2);
+	//添加列内容
+	var html4 = "";
+	{% for country in countrys %}
+		html4 += '<label style="width:150px;float:left;background-color:#CCC;margin-right:2px;margin-bottom:2px;padding-left:5px;">';
+		html4 += '<input type="checkbox" value="{{ country.id }}" id="id_pc_country'+rowID+'{{ country.id }}" name="pc_country'+rowID+'" />';
+		html4 += '<span style="color:#000;">&nbsp;{{ country.name }}</span>';
+ 		html4 += '</label>';
+    {% endfor %}
+	newTD4.innerHTML = html4;
+	
+	lastTdIndex = 3;
+	
+	//添加列:删除按钮
+	var newDeleteTD=newTR.insertCell(lastTdIndex);
+	//添加列内容
+	newDeleteTD.innerHTML = "<div align='center' style='width:40px'><a href='javascript:;' onclick=\"DeleteSignRow('"+frame+"','"+trname+rowID + "')\">删除</a></div>";
+	
+	//将行号推进下一行
+	txtTRLastIndex.value = (rowID + 1).toString();
+	//alert(txtTRLastIndex.value);
+}
+
+//删除指定行
+function DeleteSignRow(frame,rowid){
+	var signFrame = findObj(frame,document);
+	var signItem = findObj(rowid,document);
+	
+	//获取将要删除的行的Index
+	var rowIndex = signItem.rowIndex;
+	
+	//删除指定Index的行
+	signFrame.deleteRow(rowIndex);
+	
+	//重新排列序号，如果没有序号，这一步省略
+	for(i=rowIndex;i<signFrame.rows.length;i++){
+		signFrame.rows[i].cells[0].innerHTML = i.toString();
+	}
+}
+
+//清空列表
+function ClearAllSign(frame,trlastindex,trname){
+	var signFrame = findObj(frame,document);
+	var rowscount = signFrame.rows.length;
+	if (rowscount < 2) {
+		if (trname != "") {
+			alert("没有可删除的记录");
+		}
+		return true;
+	}
+	if(confirm('确定要清空所有记录吗？')){
+		//循环删除行,从最后一行往前删除
+		for(i=rowscount - 1;i > 0; i--){
+		   signFrame.deleteRow(i);
+		}
+		
+		//重置最后行号为1
+		var txtTRLastIndex = findObj(trlastindex,document);
+		txtTRLastIndex.value = "1";
+		
+		//预添加一行
+		if (trname != "") {
+			AddSignRow(frame,trlastindex,trname);
+		}
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+</script>
+
+<div class="panel panel-default">
+<!-- Default panel contents -->
+{% if do_what == 'get' %}
+	<div class="panel-heading">
+		{%include 'amazon/table_nav.html' %}
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-bordered">
+        	<thead>
+			<tr>
+				<th>编辑</th>
+				<th>合作方</th>
+				<th>项目-国家</th>
+				<th>删除</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for data in datas %}
+				<tr>
+					<!-- 编辑 -->
+					<td>
+				    	<a href="/{{ app }}/{{ view_func.name }}/modify/?recordid={{ data.id }}&page={{ datas.number }}">编辑</a>
+				    </td>
+					<!-- 合作方 -->
+				    <td>{{ data.partner.last_name }}{{ data.partner.first_name }}</td>
+				    <!-- 项目 -->
+				    <td>
+					    {% for d2 in data.pc.all %}
+					    	<p>
+					    	{{ d2.program.name }}:
+					    	{% for d3 in d2.country.all %}
+					    		{{ d3.name }}&nbsp;
+					    	{% endfor %}
+					    	</p>
+					    {% endfor %}
+				    </td>
+				    <!-- 其他操作 -->
+				    <td>
+				    	{% if perms.auth.not_delete %}
+				    	{% else %}
+				    		<a href="/{{ app }}/{{ view_func.name }}/delete/?recordid={{ data.primary_id }}&page={{ datas.number }}">删除</a>
+				    	{% endif %}
+				    	<!-- <a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.markid }}/?do_what=preview&recordid={{ data.primary_id }}">预览</a> -->
+				    </td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% else %}
+	<div class="panel-heading">
+		{% if do_what == 'add' %}
+			添加
+		{% else %}
+			修改
+		{% endif %}
+		{{ view_func.intro }}
+	</div>
+	<form class="form-horizontal" role="form" action="{{ form_action }}" method="post" style="margin-top:5px;">{%csrf_token%}
+		<div class="form-group">
+          <label for="partner" class="col-sm-2 control-label">合作方:</label>
+          <div class="col-sm-3">
+          	<input id="id_id" name="id" value="{{ datas.id|default:'0' }}" type="hidden" />
+          	<input class="form-control" id="id_partner" name="partner" style="width:150px;" value="{{ datas.partner.id|default:'0' }}" type="hidden" />
+          	{% if datas.partner %}
+				<input class="form-control" id="id_partner" name="partner" value="{{ datas.partner.id|default:'0' }}" type="hidden" />
+				<input class="form-control" id="id_partner_name" name="partner_name" value="{{ datas.partner.last_name }} {{ datas.partner.first_name }}" readonly="readonly" />
+			{% else %}
+				<input class="form-control" id="id_partner" name="partner" value="{{ user.id }}" type="hidden" />
+				<input class="form-control" id="id_partner_name" name="partner_name" value="{{ user.last_name }} {{ user.first_name }}" readonly="readonly" />
+			{% endif %}
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="partner" class="col-sm-2 control-label">项目-国家:</label>
+          <div class="col-sm-10">
+			<p>
+				<table class="table table-bordered" cellpadding="2" cellspacing="1" id="id_pc_frame">
+				    <tr id="tr_pc">
+						<td width="45" align="center">序号</td>
+						<td width="200" align="center">项目</td>
+						<td width="500" align="center">国家</td>
+						<td width="45" align="center">操作</td>
+					</tr>
+					{% for d in pcs %}
+						<tr id='pc_tr{{ forloop.counter }}'>
+							<td>
+								{{ forloop.counter }}
+								<input value="{{ d.id|default:'0' }}" id="id_pc_id{{ forloop.counter }}" name="pc_id{{ forloop.counter }}" type="hidden">
+							</td>
+						    <td>
+								<select id='id_pc_program{{ forloop.counter }}' name='pc_program{{ forloop.counter }}' style='width:150px;height:20px;'>	
+									<option value='0'>请选择项目</option>
+									{% for prog in progs %}
+										{% if prog.id == d.program.id %}
+											<option value='{{ prog.id }}' selected='selected'>{{ prog.name }}</option>
+										{% else %}
+								        	<option value='{{ prog.id }}'>{{ prog.name }}</option>
+								        {% endif %}
+								    {% endfor %}
+							    </select>
+						    </td>
+						    <td>
+				            	{% for country in countrys %}
+				            		<label style="width:150px;float:left;background-color:#CCC;margin-right:2px;margin-bottom:2px;padding-left:5px;">
+				            			{% if country.id in d.country %}
+				            				<input type="checkbox" value="{{ country.id }}" id="id_pc_country_{{ forloop.counter }}_{{ country.id }}" name="pc_country{{ forloop.parentloop.counter }}" checked="checked" />
+				            			{% else %}
+								 			<input type="checkbox" value="{{ country.id }}" id="id_pc_country_{{ forloop.counter }}_{{ country.id }}" name="pc_country{{ forloop.parentloop.counter }}" />
+								 		{% endif %}
+								 		<span style="color:#000;">&nbsp;{{ country.name }}</span>
+							 		</label>
+					            {% endfor %}
+				    		</td>
+				    		<td>
+								<div align='center' style='width:40px'>
+									<a href='javascript:void();' onclick="DeleteSignRow('pc_frame','pc_tr{{ forloop.counter }}')">删除</a>
+								</div>
+							</td>
+						</tr>									
+					{% endfor %}
+				</table>
+			</p>
+			<p>
+				<input type="button" name="add" value="添加" onclick="AddSignRow('id_pc_frame','id_pc_index','pc_tr')" /> 
+				<input type="button" name="clean" value="清空所有" onclick="ClearAllSign('id_pc_frame','id_pc_index','pc_tr')" />
+				<input name="pc_index" type="hidden" id="id_pc_index" value="{{ pc_len|default:'1' }}" />
+			</p>
+			</div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="pf" class="col-sm-2 control-label">游戏平台:</label>
+          <div class="col-sm-10">
+          	{% for pf in pfs %}
+          		<div class="checkbox">
+				  <label>
+				    {% if pf.id in pf_ids %}
+        				<input type="checkbox" value="{{ pf.id }}" id="id_pf_{{ pf.id }}" name="pf" checked="checked" />
+        			{% else %}
+			 			<input type="checkbox" value="{{ pf.id }}" id="id_pf_{{ pf.id }}" name="pf" />
+			 		{% endif %}
+			 		<span style="color:#000;">&nbsp;{{ pf.name }}</span>
+				  </label>
+				</div>
+            {% endfor %}
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="partner" class="col-sm-2 control-label">权限:</label>
+          <div class="col-sm-10">
+          	{% for action in actions %}
+          		<div class="checkbox">
+				  <label>
+				    {% if action.id in action_ids %}
+        				<input type="checkbox" value="{{ action.id }}" id="id_action_{{ action.id }}" name="action" checked="checked" />
+        			{% else %}
+			 			<input type="checkbox" value="{{ action.id }}" id="id_action_{{ action.id }}" name="action" />
+			 		{% endif %}
+			 		<span style="color:#000;">&nbsp;{{ action.intro }}</span>
+				  </label>
+				</div>
+            {% endfor %}
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="surepassword" class="col-sm-2 control-label"><button type="submit" class="btn btn-default">提交</button></label>
+          <div class="col-sm-10">
+	          {% if tips %}
+			  	<span style="color:#F00;">{{ tips }}</span>
+			  {% endif %}
+		  </div>
+        </div>
+	    </form>
+	</div>
+{% endif %}
+</div>

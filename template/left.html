@@ -1,0 +1,123 @@
+<script type="text/javascript">
+//隐藏标签
+function hidden_tag(tag_obj)
+{
+	//var tag_obj = findObj(tag_id,document);
+	tag_obj.style.display="none";
+}
+
+//显示标签
+function display_tag(tag_obj)
+{
+	//var tag_obj = findObj(tag_id,document);
+	tag_obj.style.display="block";
+}
+
+//var show_catalog = {};
+//控制目录的显示
+function toggleToc(tag_id)
+{
+	var tag_obj = window.document.getElementById(tag_id);
+	if (tag_obj.style.display == "block")
+	{
+		hidden_tag(tag_obj);
+		var tag_sign_obj = window.document.getElementById(tag_id+"_sign");
+		tag_sign_obj.innerHTML = "+&nbsp;";
+		//show_catalog[tag_id] = false;
+		//$('#togglelink').html("显示");
+	}
+	else
+	{
+		display_tag(tag_obj);
+		var tag_sign_obj = window.document.getElementById(tag_id+"_sign");
+		tag_sign_obj.innerHTML = "-&nbsp;";
+		//show_catalog[tag_id] = true;
+		//$('#togglelink').html("隐藏");
+	}
+}
+
+function toggleTocI(tag_id)
+{
+	var tag_obj = window.document.getElementById(tag_id);
+	if (tag_obj.style.display == "none")
+	{
+		display_tag(tag_obj);
+		var tag_sign_obj = window.document.getElementById(tag_id+"_sign");
+		tag_sign_obj.innerHTML = "-&nbsp;";
+		//show_catalog[tag_id] = true;
+		//$('#togglelink').html("隐藏");
+	}
+}
+</script>
+<div id="leftsider">
+  <h1>索引</h1>
+  <div class="boxcont">
+    <ul class="function">
+    	<li class="type">
+	    	<img src="/media/images/Article_li_img.png" />
+	    	<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/protobufdata/">生成数据库&data.swf&上下行</a>
+	    </li>
+	    {% if perms.auth.edit_sheet %}
+		    <li class="type">
+		    	<img src="/media/images/Article_li_img.png" />
+		    	<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/model/">参数表</a>
+		    </li>
+		    <li class="type">
+		    	<img src="/media/images/Article_li_img.png" />
+		    	<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/formula/">公式表</a>
+		    </li>
+		    <li class="type">
+		    	<img src="/media/images/Article_li_img.png" />
+		    	<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/charting/">绘制图表</a>
+		    </li>
+		{% endif %}
+		<li class="type">
+	    	<img src="/media/images/Article_li_img.png" />
+	    	<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/client_edit/" target="_blank">客户端编辑</a>
+	    </li>
+	    {% for s1 in sheets %}
+	    	{% if sheet.sys_model.id == s1.sys_model.id %}
+	    		<li><!--  onmouseover="toggleTocI('id_{{ s1.sys_model.markid }}');return false;" -->
+	    			<a href="javascript:void();" onclick="toggleToc('id_{{ s1.sys_model.markid }}');return false;">
+	    				<b><span id="id_{{ s1.sys_model.markid }}_sign">-&nbsp;</span>{{ s1.sys_model.name }}</b>
+	    			</a>
+	    		</li>
+	    		<ul id="id_{{ s1.sys_model.markid }}" style="display:block">	    		
+	    	{% else %}
+	    		<li><!--  onmouseover="toggleTocI('id_{{ s1.sys_model.markid }}');return false;" -->
+		    		<a href="javascript:void();" onclick="toggleToc('id_{{ s1.sys_model.markid }}');return false;">
+		    			<b><span id="id_{{ s1.sys_model.markid }}_sign">+&nbsp;</span>{{ s1.sys_model.name }}</b>
+		    		</a>
+		    	</li>
+	    		<ul id="id_{{ s1.sys_model.markid }}" style="display:none">
+	    	{% endif %}
+			    {% for s2 in s1.sub_sheets.values %}
+			    	{% if  sheet.sys_model.id == s1.sys_model.id and sheet.sys_model2.id == s2.sys_model2.id %}
+			    		<li class="level2"><!--  onmouseover="toggleTocI('id_{{ s1.sys_model.markid }}_{{ s2.sys_model2.markid }}');return false;" -->
+			    			<a href="javascript:void();" onclick="toggleToc('id_{{ s1.sys_model.markid }}_{{ s2.sys_model2.markid }}');return false;">
+			    				<b><span id="id_{{ s1.sys_model.markid }}_{{ s2.sys_model2.markid }}_sign">-&nbsp;</span>{{ s2.sys_model2.name }}</b>
+			    			</a>
+			    		</li>
+			    		<ul id="id_{{ s1.sys_model.markid }}_{{ s2.sys_model2.markid }}" style="display:block">
+			    	{% else %}
+			    		<li class="level2"><!--  onmouseover="toggleTocI('id_{{ s1.sys_model.markid }}_{{ s2.sys_model2.markid }}');return false;" -->
+			    			<a href="javascript:void();" onclick="toggleToc('id_{{ s1.sys_model.markid }}_{{ s2.sys_model2.markid }}');return false;">
+			    				<b><span id="id_{{ s1.sys_model.markid }}_{{ s2.sys_model2.markid }}_sign">+&nbsp;</span>{{ s2.sys_model2.name }}</b>
+			    			</a>
+			    		</li>
+			    		<ul id="id_{{ s1.sys_model.markid }}_{{ s2.sys_model2.markid }}" style="display:none">
+			    	{% endif %}
+			    		{% for s3 in s2.sub_sheets2 %}
+				        	<li class="type">
+						    	<img src="/media/images/Article_li_img.png" />
+						    	<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ s3.name }}/">{{ s3.intro }}({{ s3.name }})</a>
+						    </li>
+						{% endfor %}
+					</ul>
+				{% endfor %}
+			</ul>
+		{% endfor %}
+    </ul>
+  </div>
+  <div class="bottom"></div>
+</div>

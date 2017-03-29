@@ -1,0 +1,118 @@
+@CHARSET "UTF-8";
+html, body  { height:100%; }
+body { margin:0; padding:0; background-color: #000;} 
+object:focus { outline:none; }
+
+#menu .tips {
+	color: #FFF; 
+	font-size: 12px;
+	height:20px;
+	text-align: center; 
+	line-height:20px; 
+	color:#d4c688;	
+	width: 450px;
+}
+#menu { 
+	width: 100%;
+	height:20px;
+	font-size: 12px;
+	background:#726136;
+	padding-top:1px;
+	padding-bottom:1px;
+}
+#menu table {
+	height:20px;
+	margin:0 0 0 0;
+	padding:0 0 0 0;
+	border:0px;
+	border-collapse:collapse;
+}
+#menu td {
+	margin:0 0 0 0;
+	border:0px;
+	padding:0 0 0 0;
+}
+#menu ul { 
+	height:20px;
+	list-style: none; 
+	margin:0;
+	float:right
+}
+#menu ul li {
+	float:left; 
+	padding:0px 5px 0px 5px;
+}
+#menu ul li .add_favorite { 
+	width: 100px;
+	height: 20px;
+	background:url(http://res.darkhutgame.com/assetsmedia/sea/chs/media/images/add_favorite.png) center no-repeat ;
+
+}
+#menu ul li a { 
+	display:block; 
+	width:70px; 
+	height:20px; 
+	line-height:20px; 
+	text-align:center; 
+	background:url(http://res.darkhutgame.com/assetsmedia/sea/chs/media/images/white_button.png) no-repeat; font-size:12px;
+	text-decoration:none;	
+}
+#menu ul li .qplus_invite { 
+	display:block; 
+	width:80px; 
+	height:20px; 
+	line-height:20px; 
+	text-align:center; 
+	background:url(http://res.darkhutgame.com/assetsmedia/sea/chs/media/images/white_button1.png)  repeat-x; font-size:12px;
+	text-decoration:none;	
+}
+#menu ul li .menu_nav { 
+	display:block;
+	height:20px; 
+	line-height:20px; 
+	text-align:center; 
+	background:url(http://res.darkhutgame.com/assetsmedia/sea/chs/media/images/white_button1.png)  repeat-x; font-size:12px;
+	text-decoration:none;
+}
+
+#menu ul li form .menu_nav_btn { 
+	display:block;
+	height:20px; 
+	line-height:20px; 
+	text-align:center; 
+	background:url(http://res.darkhutgame.com/assetsmedia/sea/chs/media/images/white_button1.png)  repeat-x; font-size:12px;
+	boder: 0px;
+	margin: 0;
+	paddin: 0;
+}
+
+#full_flash {
+	margin: 0;
+}
+#dhh {
+	/*display: none;*/
+	margin: 0;
+	width: 100%;
+}
+#stage_checker {
+	z-index:1000;
+	display:block;
+	position:fixed;
+	_position:absolute;
+	bottom:0;
+	left:0;
+	width:1px;
+	height:1px;
+	overflow:hidden;	
+}
+#counter {
+	z-index:1000;
+	display:block;
+	position:fixed;
+	_position:absolute;
+	bottom:0;
+	right:0;
+	width:1px;
+	height:1px;
+	overflow:hidden;
+}

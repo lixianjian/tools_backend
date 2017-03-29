@@ -1,0 +1,528 @@
+<script LANGUAGE="JavaScript">
+// Example: obj = findObj("image1");
+function findObj(theObj, theDoc)
+{ 
+	var p, i, foundObj; 
+	if(!theDoc)
+		theDoc = document; 
+	if((p = theObj.indexOf("?")) > 0 && parent.frames.length) {   
+		theDoc = parent.frames[theObj.substring(p+1)].document;
+		theObj = theObj.substring(0,p);
+	}
+	if(!(foundObj = theDoc[theObj]) && theDoc.all)
+		foundObj = theDoc.all[theObj];
+	for (i=0; !foundObj && i < theDoc.forms.length; i++)
+		foundObj = theDoc.forms[i][theObj];
+	for(i=0; !foundObj && theDoc.layers && i < theDoc.layers.length; i++)
+		foundObj = findObj(theObj,theDoc.layers[i].document);
+	if(!foundObj && document.getElementById)
+		foundObj = document.getElementById(theObj);
+	return foundObj;
+}
+
+//添加行
+function AddSignRow(frame,trlastindex,trname){
+	//alert(trlastindex);
+	//读取最后一行的行号，存放在txtTRLastIndex文本框中 
+	var txtTRLastIndex = findObj(trlastindex,document);
+	//alert(txtTRLastIndex);
+	var rowID = parseInt(txtTRLastIndex.value);
+	//alert(rowID);
+	var signFrame = findObj(frame,document);
+	//alert(signFrame);
+	//添加行, signFrame.rows.length
+	var newTR = signFrame.insertRow(rowID);
+	newTR.id = trname + rowID;
+	
+	//操作字段所在索引
+	var lastTdIndex = 0;
+	
+	//添加列:序号
+	var newIdTD=newTR.insertCell(lastTdIndex++);
+	newIdTD.bgcolor = "#96E0E2";
+	//添加列内容
+	var html0 = newTR.rowIndex.toString();// + "<input name='field_id" + rowID + "' id='id_field_id" + rowID + "' type='hidden' value='"+ rowID +"' />";
+	html0 += '<input id="id_field_id' + rowID + '" name="field_id' + rowID + '" style="width:100px;" value="0" type="hidden" />';
+	//增:1, 删:2, 改:3; 默认是修改
+	html0 += '<input id="id_field_status' + rowID + '" name="field_status' + rowID + '" style="width:100px;" value="1" type="hidden" />';
+	//alert(html0);
+	newIdTD.innerHTML = html0;
+	
+	//添加列:英文名
+	var newNameTD = newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	newNameTD.innerHTML = "<input name='field_name" + rowID + "' id='id_field_name" + rowID + "' type='text' value='' style='width:120px;' />";
+	
+	//添加列:中文名
+	var newIntroTD = newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	newIntroTD.innerHTML = "<input name='field_intro" + rowID + "' id='id_field_intro" + rowID + "' type='text' value='' style='width:120px;' />";
+	
+	//添加列:类型
+	var newTypeTD = newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	var html1 = '<select id="id_field_type'+rowID+'" name="field_type'+rowID+'" style="width:120px;height:20px;" onchange="javascript:foreign_checkbox(\'id_field_type'+rowID+'\',\'id_field_to_p'+rowID+'\','+rowID+')">';
+	html1 += '<option value="0">请选择一个类型</option>';
+	{% for field_type in field_types %}
+	html1 += '<option value="{{ field_type.id }}">{{ field_type.intro }}</option>';
+	{% endfor %}
+	html1 += '</select>';
+	newTypeTD.innerHTML = html1;
+	
+	//添加列:外键参数
+	var newToTD = newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	var html2 = '<p id="id_field_to_p'+rowID+'"><select id="id_field_to'+rowID+'" name="field_to'+rowID+'" style="width:120px;height:20px;">';
+	html2 += '<option value="">请选择一个表</option>';
+	{% for table in tables %}
+	html2 += '<option value="{{ table.name }}">{{ table.intro }}</option>';
+	{% endfor %}
+	html2 += '</select></p>';
+	newToTD.innerHTML = html2;
+	
+	//添加列:外键字段
+	var newTofieldTD = newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	var html3 = '<p>';
+	html3 += '<input type="button" name="field_to_field" value="选择字段" onclick="javascript:choose_field(\'id_field_to'+rowID+'\',\'id_field_to_field'+rowID+'\','+rowID+')" />';
+	//alert(html3);
+	html3 += '</p>';
+	html3 += '<p id="id_field_to_field'+rowID+'">';
+	html3 += '</p>';
+	newTofieldTD.innerHTML = html3;
+	
+	//添加列:最大长度
+	var newMaxLengthTD = newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	newMaxLengthTD.innerHTML = "<input name='field_max_length" + rowID + "' id='id_field_max_length" + rowID + "' type='text' value='0' style='width:120px;' />";
+	
+	/*//添加列:默认值
+	var newDefaultTD = newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	newDefaultTD.innerHTML = "<input name='field_default" + rowID + "' id='id_default" + rowID + "' type='text' value='' style='width:120px;' />";
+	*/
+	//添加列:删除按钮
+	var newDeleteTD=newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	newDeleteTD.innerHTML = "<div align='center' style='width:40px'><a href='javascript:;' onclick=\"DeleteSignRow('"+frame+"','"+trname+rowID + "','id_field_status" + rowID+"')\">删除</a></div>";
+	
+	//将行号推进下一行
+	txtTRLastIndex.value = (rowID + 1).toString();
+	//alert(txtTRLastIndex.value);
+}
+
+//删除指定行
+function DeleteSignRow(frame,rowid,statusid){
+	//var signFrame = findObj(frame,document);
+	var signItem = findObj(rowid,document);
+	var signStatus = findObj(statusid,document);
+	
+	//获取将要删除的行的Index
+	//var rowIndex = signItem.rowIndex;
+	signStatus.value = "2";
+	
+	//删除指定Index的行
+	//signFrame.deleteRow(rowIndex);
+	signItem.style.display = "none";
+	
+	/*//重新排列序号，如果没有序号，这一步省略
+	for(i=rowIndex;i<signFrame.rows.length;i++){
+		signFrame.rows[i].cells[0].innerHTML = i.toString();
+	}*/
+}
+
+//清空列表
+function ClearAllSign(frame,trlastindex,trname,statusname){
+	if(confirm('确定要清空所有记录吗？')){
+		//var signFrame = findObj(frame,document);
+		//var rowscount = signFrame.rows.length;
+		var txtTRLastIndex = findObj(trlastindex,document);
+		//alert(txtTRLastIndex);
+		var rowID = parseInt(txtTRLastIndex.value);
+		
+		//循环删除行,从最后一行往前删除
+		for(i=rowID - 1;i > 0; i--){
+			//signFrame.deleteRow(i);
+		   	var signItem = findObj(trname+i,document);
+			var signStatus = findObj(statusname+i,document);
+			signStatus.value = "2";
+			signItem.style.display = "none";
+		}
+		
+		//重置最后行号为1
+		//var txtTRLastIndex = findObj(trlastindex,document);
+		//txtTRLastIndex.value = "1";
+		
+		//预添加一行
+		AddSignRow(frame,trlastindex,trname);
+	}
+}
+
+function check_format() {
+	var txtTRLastIndex = findObj("id_field_index",document);
+	//alert(txtTRLastIndex);
+	var rowID = parseInt(txtTRLastIndex.value);
+	
+	//循环删除行,从最后一行往前删除
+	for(i=rowID - 1;i > 0; i--){
+		//signFrame.deleteRow(i);
+	   	var status_obj = findObj("id_field_status"+i,document);
+		if (status_obj == null | (status_obj.value != "1" & status_obj.value != "3"))
+			continue
+		var name_obj = findObj("id_field_name"+i,document);
+		if (name_obj == null | name_obj.value == ""){
+			alert("第"+i+"行英文名为空");
+			return false;
+		}
+		var intro_obj = findObj("id_field_intro"+i,document);
+		if (intro_obj == null | intro_obj.value == ""){
+			alert("第"+i+"行中文名为空");
+			return false;
+		}
+		var type_obj = findObj("id_field_type"+i,document);
+		if (type_obj == null | type_obj.value == "0"){
+			alert("第"+i+"行类型为空");
+			return false;
+		}
+		var type_value = type_obj.value;
+		//外键和多对多类型必须加上外键参数
+		if (type_value == "9" | type_value == "11"){
+			var to_obj = findObj("id_field_to"+i,document);
+			if (to_obj == null | to_obj.value == ""){
+				alert("第"+i+"行外键参数为空");
+				return false;
+			}
+		}
+		//字符串类型必须加上最大长度
+		else if (type_value == "5" | type_value == "12") {
+			var max_length_obj = findObj("id_field_max_length"+i,document);
+			if (max_length_obj == null | max_length_obj.value == "" | max_length_obj.value == "0"){
+				alert("第"+i+"行最大长度为零或空，字符串类型必须填写最大长度");
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+var to_obj = null;
+var to_field_tag;
+var num;
+//获取
+function choose_field(to_tag,to_field_tag1,num1){
+	to_tag = to_tag;
+	to_field_tag = to_field_tag1;
+	//alert(to_field_tag);
+	num = num1;
+	to_obj = findObj(to_tag,document);
+	if (to_obj == null | to_obj.value == "0") {
+		alert("请先选择外加参数");
+		return false;
+	}
+	//alert(to_obj.value);
+	//获取卡片数据
+	action = 'get';
+	$.ajax({
+		url: '/parameters/get_fields/',
+		type:'get',
+		dataType:'json',
+		data: {'to': to_obj.value},
+		success:to_field_callback
+	});
+}
+//接受返回
+function to_field_callback(datas)
+{	
+	if (datas == null | datas.length == 0){
+		alert('没有相应字段信息，如确定外键参数无误，请联系管理员');
+		return false;
+	}
+	else {
+		write_to_field(datas);
+	}
+}
+
+//选择字段
+function write_to_field(datas) {
+	if (to_obj == null | to_obj.value == "0") {
+		alert("请先选择外加参数");
+		return false;
+	}
+	var to_field_obj = document.getElementById(to_field_tag);
+	var html2 = ""
+	html2 += '<select id="id_field_to_field'+num+'" name="field_to_field'+num+'" style="width:150px;height:20px;">';
+	html2 += '<option value="">请选择一个字段</option>';
+	for (var i=0; i<datas.length; i++) {
+		html2 += '<option value="'+datas[i]+'">'+datas[i]+'</option>';
+	}
+	html2 += '</select>';
+	to_field_obj.innerHTML = html2;
+}
+
+var tables	= []
+{% for table in tables %}
+	tables.push(["{{ table.name }}","{{ table.intro }}"]);
+{% endfor %}
+function foreign_checkbox(to_type_tag, to_p_tag, num) {
+	var to_type_obj = document.getElementById(to_type_tag);
+	if (to_type_obj.value == '13') {
+		var html2 = ""
+		for (var i1=0;i1<tables.length;i1++) {
+			html2 += '<label style="width:150px;float:left;background-color:#CCC;margin-right:2px;margin-bottom:2px;padding-left:5px;">';
+			html2 += '<input id="id_field_to'+num+'" name="field_to'+num+'" value="'+tables[i1][0]+'" type="checkbox" />';
+			html2 += '<span style="color:#000;">'+ tables[i1][1] +'</span>';
+			html2 += '</label>';
+		}
+		var to_p_obj = document.getElementById(to_p_tag);
+		to_p_obj.innerHTML = html2;	
+	}
+}
+</script>
+
+{% if do_what == 'get' %}
+	<div>
+		<table class="data">
+			<tr>
+				<th>编辑</th>
+				<th>英文名</th>
+				<th>中文名</th>
+				<th>最后一个记录ID</th>
+				<th>是否上下行表</th>
+				<th>更多操作</th>
+			</tr>
+			<tr>
+				<td></td>
+				<td>name</td>
+				<td>intro</td>
+				<td>num</td>
+				<td>is_proto</td>
+				<td></td>
+			</tr>
+			{% for data in datas %}
+				<tr>
+					<!-- 删除 -->
+					<td>
+				    	<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what=modify&recordid={{ data.id }}&page={{ datas.number }}">编辑</a>
+				    </td>
+					<!-- 表名 -->
+				    <td>{{ data.name }}</td>
+					<!-- 描述 -->
+				    <td>{{ data.intro }}</td>
+					<!-- 最后一个记录ID -->
+				    <td>{{ data.num }}</td>
+					<!-- 是否上下行表 -->
+				    <td>
+				    	{% if data.is_proto %}
+							是
+						{% else %}
+							否
+						{% endif %}
+					</td>
+				    <!-- 其他操作 -->
+				    <td>
+				    	<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what=delete&recordid={{ data.id }}&page={{ datas.number }}">删除</a>
+				    </td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{% else %}
+	<div id="form_table">
+		<form action="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what={{ do_what }}&recordid={{ recordid }}&page={{ page }}" method="post">{%csrf_token%}
+			<table style="border:1px solid <!-- 000;" class="regist_table">
+		    	<tr>
+		    		<td class="right_td">一级目录：</td>
+					<td>
+						<select id="id_sys_model" name="sys_model" style="width:150px;height:20px;">
+			            	<option value="0">请选择一个一级目录</option>
+			            	{% for sys_model in sys_models %}
+								
+			            		{% if sys_model.id == datas.sys_model.id or sys_model.id == datas.sys_model %}
+			            			<option value="{{ sys_model.id }}"  selected="selected">{{ sys_model.name }}</option>
+			            		{% else %}
+						        	<option value="{{ sys_model.id }}">{{ sys_model.name }}</option>
+						        {% endif %}
+				            {% endfor %}
+			            </select>
+					</td>
+				</tr>
+				<tr>
+		    		<td class="right_td">二级目录：</td>
+					<td>
+						<select id="id_sys_model2" name="sys_model2" style="width:150px;height:20px;">
+			            	<option value="0">请选择一个二级目录</option>
+			            	{% for sys_model2 in sys_models2 %}
+			            		{% if sys_model2.id == datas.sys_model2.id or sys_model2.id == datas.sys_model2 %}
+			            			<option value="{{ sys_model2.id }}"  selected="selected">{{ sys_model2.name }}</option>
+			            		{% else %}
+						        	<option value="{{ sys_model2.id }}">{{ sys_model2.name }}</option>
+						        {% endif %}
+				            {% endfor %}
+			            </select>
+					</td>
+				</tr>
+				<tr>
+		    		<td class="right_td">英文表名：</td>
+		    		<td class="left_td">
+		    			<input id="id_name" name="name" style="width:150px;" value="{{ datas.name }}" type="text" />
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td class="right_td">中文表名：</td>
+		    		<td class="left_td">
+		    			<input id="id_intro" name="intro" style="width:150px;" value="{{ datas.intro }}" type="text" />
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td class="right_td">第一条记录ID：</td>
+		    		<td class="left_td">
+		    			<input id="id_num" name="num" style="width:150px;" value="{{ datas.num|default:'0' }}" type="text" />
+		    		</td>
+		    	</tr>
+				<tr>
+		    		<td class="right_td">是否上下行表：</td>
+		    		<td class="left_td">
+				 		<label style="width:150px;float:left;background-color:#CCC;margin-right:2px;margin-bottom:2px;padding-left:5px;">
+				 			{% if datas.is_proto %}
+				 				<input id="id_is_proto" name="is_proto" value="1" type="checkbox" checked="checked" />
+				 			{% else %}
+				 				<input id="id_is_proto" name="is_proto" value="1" type="checkbox" />
+				 			{% endif %}
+				 			<span style="color:#000;">上下行表</span>
+				 		</label>
+				 		<span style="color:#F00;">(默认非上下行表)</span>
+		    		</td>
+		    	</tr>
+		    	<tr>
+				    <td class="right_td">字段：</td>
+		    		<td class="left_td">
+		    			<p>
+							<table width="1000" border="1px" cellpadding="2" cellspacing="1" id="id_field_frame" bordercolor="#000">
+							    <tr id="tr_field">
+									<td width="40" align="center" bgcolor="#96E0E2">序号</td>
+									<td width="120" align="center" bgcolor="#96E0E2">英文名</td>
+									<td width="120" align="center" bgcolor="#96E0E2">中文名</td>
+									<td width="150" align="center" bgcolor="#96E0E2">类型</td>
+									<td width="120" align="center" bgcolor="#96E0E2">外键参数</td>
+									<td width="120" align="center" bgcolor="#96E0E2">外键字段</td>
+									<td width="120" align="center" bgcolor="#96E0E2">最大长度</td>
+									<!-- <td width="120" align="center" bgcolor="#96E0E2">默认值</td> --> 
+									<td width="40" align="center" bgcolor="#96E0E2">操作</td>
+								</tr>
+								{% for d in datas.field %}
+									<tr id='id_field_tr{{ forloop.counter }}' name='field_tr{{ forloop.counter }}'>
+										<td>
+											{{ forloop.counter }}
+											<input id="id_field_id{{ forloop.counter }}" name="field_id{{ forloop.counter }}" style="width:100px;" value="{{ d.id|default:'0' }}" type="hidden" />
+											<!-- 增:1, 删:2, 改:3; 默认是修改-->
+											<input id="id_field_status{{ forloop.counter }}" name="field_status{{ forloop.counter }}" style="width:100px;" value="{{ d.status|default:'3' }}" type="hidden" />
+										</td>
+									    <td>
+											<input id="id_field_name{{ forloop.counter }}" name="field_name{{ forloop.counter }}" style="width:120px;" value="{{ d.name|default:'' }}" type="text" />
+										</td>
+									    <td>
+											<input id="id_field_intro{{ forloop.counter }}" name="field_intro{{ forloop.counter }}" style="width:120px;" value="{{ d.intro|default:'' }}" type="text" />
+										</td>
+									    <td>
+											<select id="id_field_type{{ forloop.counter }}" name="field_type{{ forloop.counter }}" style="width:120px;height:20px;" onchange="javascript:foreign_checkbox('id_field_type{{ forloop.counter }}', 'id_field_to_p{{ forloop.counter }}', {{ forloop.counter }})">
+								            	<option value="0">请选择一个类型</option>
+								            	{% for field_type in field_types %}
+								            		{% if field_type.id == d.type %}
+								            			<option value="{{ field_type.id }}"  selected="selected">{{ field_type.intro }}</option>
+								            		{% else %}
+											        	<option value="{{ field_type.id }}">{{ field_type.intro }}</option>
+											        {% endif %}
+									            {% endfor %}
+								            </select>
+										</td>
+										<td>
+											<p id="id_field_to_p{{ forloop.counter }}">
+												{% if d.type == 13 %}
+													{% for table in tables %}
+														{% if table.name in d.to %}
+															<label style="width:150px;float:left;background-color:#CCC;margin-right:2px;margin-bottom:2px;padding-left:5px;">
+																<input id="id_field_to_{{ table.name }}{{ forloope.parentloop.counter }}" name="field_to{{ forloope.parentloop.counter }}" value="{{ table.name }}" type="checkbox" checked="checked" />
+																<span style="color:#000;">{{ table.intro }}</span>
+															</label>
+														{% else %}
+															<label style="width:150px;float:left;background-color:#CCC;margin-right:2px;margin-bottom:2px;padding-left:5px;">
+																<input id="id_field_to_{{ table.name }}{{ forloope.parentloop.counter }}" name="field_to{{ forloope.parentloop.counter }}" value="{{ table.name }}" type="checkbox" />
+																<span style="color:#000;">{{ table.intro }}</span>
+															</label>
+														{% endif %}
+													{% endfor %}
+												{% else %}
+													<select id="id_field_to{{ forloop.counter }}" name="field_to{{ forloop.counter }}" style="width:120px;height:20px;">
+										            	<option value="">请选择一个表</option>
+										            	{% for table in tables %}
+										            		{% if table.name == d.to %}
+										            			<option value="{{ table.name }}"  selected="selected">{{ table.intro }}</option>
+										            		{% else %}
+													        	<option value="{{ table.name }}">{{ table.intro }}</option>
+													        {% endif %}
+											            {% endfor %}
+										            </select>
+												{% endif %}
+											</p>
+										</td>
+										<td>
+											{% if d.type == 9 or d.type == 11 %}
+								    			<p>
+								    				<input type="button" name="add" value="选择字段" onclick="choose_field('id_field_to{{ forloop.counter }}','id_field_to_field{{ forloop.counter }}',{{ forloop.counter }})" />
+								    			</p>
+								    			<p id="id_odds_odds_to_field{{ forloop.counter }}">
+												 	<select id="id_field_to_field{{ forloop.counter }}" name="field_to_field{{ forloop.counter }}" style="width:150px;height:20px;">
+										            	<option value="">请选择一个字段</option>
+										            	{% for field in d.fields %}
+										            		{% if field == d.to_field %}
+										            			<option value="{{ field }}"  selected="selected">{{ field }}</option>
+										            		{% else %}
+													        	<option value="{{ field }}">{{ field }}</option>
+													        {% endif %}
+											            {% endfor %}
+										            </select>
+												</p>
+											{% endif %}
+							    		</td>
+										<td>
+											<input id="id_field_max_length{{ forloop.counter }}" name="field_max_length{{ forloop.counter }}" style="width:100px;" value="{{ d.max_length|default:'0' }}" type="text" />
+										</td>
+										<!-- <td>
+											<input id="id_field_default{{ forloop.counter }}" name="field_max_length{{ forloop.default }}" style="width:100px;" value="{{ d.default|default:'' }}" type="text" />
+										</td>
+										 -->
+										<td>
+											<div align='center' style='width:40px'><a href='javascript:void();' onclick="DeleteSignRow('id_field_frame','id_field_tr{{ forloop.counter }}','id_field_status{{ forloop.counter }}')">删除</a></div>
+										</td>
+									</tr>
+								{% endfor %}
+							</table>
+						</p>
+						<p>
+							<input type="button" name="add" value="添加" onclick="AddSignRow('id_field_frame','id_field_index','id_field_tr')" /> 
+							<input type="button" name="clean" value="清空所有" onclick="ClearAllSign('id_field_frame','id_field_index','id_field_tr','id_field_status')" />
+							<input name="field_index" type="hidden" id="id_field_index" value="{{ field_len|default:'1' }}" />
+						</p>
+		    			
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td class="right_td">外键表显示字段(英文名)：</td>
+		    		<td class="left_td">
+		    			<input id="id_display" name="display" style="width:150px;" value="{{ datas.display|default:'' }}" type="text" />
+						(<span style="color:#F00;">不做外键，就保持为空</span>)
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td class="right_td"><input type='submit' value='提交' class="btn" onclick="javascript:return check_format();" /></td>
+		    		<td class="left_td">
+		    			<!-- <a onclick="javascript:return check_format();" href="javascript:void();">测试</a> -->
+		    			{% if tips %}
+							<span style="color:#F00;">{{ tips }}</span>
+						{% endif %}
+		    		</td>
+		    	</tr>
+			</table>
+	    </form>
+	</div>
+{% endif %}

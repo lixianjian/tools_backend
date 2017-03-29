@@ -1,0 +1,103 @@
+<script LANGUAGE="JavaScript">
+function charting(){
+	var formula = $('#id_formula').val();
+	//alert(formula);
+	if (formula == 0) 
+		alert("请选择公式");
+	else {
+		var params = "reqmode=js&formula=" + formula;
+		$.ajax({
+			url: "/parameters/{{ program.markid }}/{{ locale.markid }}/charting/",
+			type: 'get',
+			dataType: 'json',
+			data: params,
+			success: callback_charting
+		});
+	}
+}
+
+var datas = {};
+function callback_charting(data){
+	var ret = data["ret"];
+	var html_str = ""; 
+	if (ret == 0 ){//执行成功，下载数据
+		datas = data;
+		drawChart(data['datas']['td'],data['datas']['x'],data['datas']['y']);
+		//alert("成功");
+	}
+	else{
+		if (data["msg"])
+			alert(data["msg"]);
+		else
+			alert("重新生成失败");
+	}
+}
+
+//图表
+
+function drawChart(data,x,y){
+	var data = new google.visualization.DataTable(data
+	/*
+	{
+		 cols: [{id: 'task', label: 'Employee Name', type: 'number'},
+				 {id: 'startDate', label: 'Start Date', type: 'number'},
+				 {id: 'startDate2', label: 'Start Date2', type: 'number'}
+				],
+		 rows: [{'c':[{'v': 0}, {'v': 0}, {'v': 1}]},
+				 {c:[{v: 1},{v: 10},{}]},
+				 {c:[{v: 2}, {v: 23},{v: 15}]},
+				 {c:[{v: 3}, {v: 17},{v: 9}]},
+				 {c:[{v: 4}, {v: 18},{}]},
+				 {c:[{v: 5}, {v: 9},{}]}
+		 		]
+	 }
+	*/
+	);
+	
+	var options = {
+		width: 1000,
+		height: 563,
+		hAxis: {
+			title: x
+		},
+		vAxis: {
+			title: y
+		},
+	};
+	var ctype = $("#id_ctype").val();
+	var chart;
+	if (ctype == 'line') 
+		chart = new google.visualization.LineChart(document.getElementById('id_charting'));
+	else if (ctype == 'scatter')
+		chart = new google.visualization.ScatterChart(document.getElementById('id_charting'));
+	chart.draw(data, options);
+}
+
+</script>
+<div id="form_table">
+	<table style="border:1px solid <!-- 000;" class="regist_table">
+    	<tr>
+    		<td class="right_td">公式：</td>
+    		<td>
+                <select id="id_formula" name="formula" style="width:300px">
+                    {% for formula in formulas %}                            
+                        <option value="{{ formula.id }}">{{ formula.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+        </tr>
+		<tr>
+    		<td class="right_td">图表类型：</td>
+    		<td>
+                <select id="id_ctype" name="ctype" style="width:300px">
+                    <option value="line">曲线图</option>
+                    <option value="scatter">打点图</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+    		<td class="right_td"><button class="submit_btn" onclick="javascript: charting();">生成图表</button></td>
+    	</tr>
+	</table>
+</div>
+<div id="id_charting"></div>

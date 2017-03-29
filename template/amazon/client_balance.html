@@ -1,0 +1,28 @@
+<div class="panel panel-default">
+<!-- Default panel contents -->
+	<div class="panel-heading">
+		{%include 'amazon/table_nav.html' %}
+	</div>
+	
+	
+	<div class="table-responsive">
+		<table class="table table-bordered">
+        	<thead>
+				<tr>
+					<th>合作方</th>
+					<th>余额</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for data in datas %}
+					<tr>
+						<!-- 合作方 -->
+					    <td>{{ data.partner.last_name }}{{ data.partner.first_name }}</td>
+					    <!-- 余额 -->
+					    <td>{{ data.balance }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>

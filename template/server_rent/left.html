@@ -1,0 +1,20 @@
+<div id="leftsider">
+  <h1>功能</h1>
+  <div class="boxcont">
+    <ul class="function">
+    	{% if perms.add_company %}
+	    	<li class="type">
+		    	<img src="/media/images/Article_li_img.png" />
+		    	<a href="/rent/company/">公司</a>
+		    </li>
+		{% endif %}
+		{% if perms.add_staff %}
+	        <li class="type">
+		    	<img src="/media/images/Article_li_img.png" />
+		    	<a href="/rent/staff/">职员</a>
+		    </li>
+		{% endif %}
+    </ul>
+  </div>
+  <div class="bottom"></div>
+</div>

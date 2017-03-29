@@ -1,0 +1,236 @@
+<!-- <div class="data_title">
+	<p>
+		欢迎[&nbsp;<span style="color:#390;"><b>{{ user.last_name }}{{ user.first_name }}</b></span>&nbsp;]登陆&nbsp;&nbsp;&nbsp;&nbsp;
+		<a href="/bonus/alter_password/">修改密码</a>&nbsp;&nbsp;
+		<a href="/bonus/quity/">注销</a>&nbsp;&nbsp;
+	</p>
+</div>
+ -->
+
+<div class="panel panel-default">
+	<div class="panel-heading">项目同伙</div>
+	<div class="panel-body">
+		<form class="form-inline" name="search" action="/bonus/programuserinfo/?do_what=get" method="post" id="id_frm_view_spoils">{% csrf_token %}
+		  <div class="form-group">
+		    <label for="pid">项目</label>
+		    <select id="id_view_pid" name="view_pid" class="form-control input-sm" style="width:210px;">
+		        {% for pprogram in pprograms %}
+		        	{% if pprogram.program.id == pid %}
+		        		<option value ="{{ pid }}" selected="selected">{{ pprogram.program.name }}</option>
+		        	{% else %}
+						<option value ="{{ pprogram.program.id }}">{{ pprogram.program.name }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+		  </div>
+		  <div class="form-group">
+		    <label for="moth">月份</label>
+		    <div class='input-group date month' for="id_view_month">
+                <input type='text' class="form-control input-sm" name="view_month" id="id_view_month" value="{{ moth }}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+		  </div>
+		  <button type="button" class="btn btn-default input-sm" id="id_view_spoils_submit">查看项目同伙</button>
+		  <!-- <a href="/bonus/programuserinfo/?do_what=get&pid={{ pid }}" style="text-decoration: none;"> -->
+		  <button  type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#id_spoils_modal">增加项目同伙</button>
+		  <!-- </a> -->
+		  <a href="/bonus/programuserinfo/?do_what=copy&pid={{ pid }}&month={{ month }}">
+		    <button type="button" class="btn btn-primary btn-sm">复制上月项目同伙</button>
+		  </a>  
+		</form>
+		<div class="modal fade" id="id_spoils_modal" tabindex="-1" role="dialog" aria-labelledby="spoilsModalLabel" aria-hidden="true" style="display: none;">
+	      <div class="modal-dialog">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	            <h4 class="modal-title" id="myModalLabel">增加项目同伙</h4>
+	          </div>
+	          <div class="modal-body">
+				<form role="form" id="id_frm_add_spoils" action="/api/add_user" method="POST" class="form-horizontal">
+		            <div class="form-group form-group-sm">
+		              	<label class="col-md-4 control-label" style="text-align: left;">同伙</label>
+						<div class="col-md-8">
+		              		<select id="id_uid" name="uid" class="form-control input-sm">					    				
+			    				<option value ="0" name="uid">--- 请选择一个同伙 ---</option>
+								{% for uinfo in users %}
+							 		{% if uinfo.id not in proguids %}
+							 			<option value ="{{ uinfo.id }}" name="uid">{{ uinfo.last_name }}{{ uinfo.first_name }}</option>
+									{% endif %}
+								{% endfor %}
+				            </select>
+						</div>
+		            </div>
+		            <!-- <div class="form-group form-group-sm">
+		              	<label class="col-md-4 control-label" style="text-align: left;">组</label>
+						<div class="col-md-8">
+		              		<select id="id_gid" name="gid" class="form-control input-sm">					    				
+			    				<option value ="0" name="gid">--- 请选择一个组 ---</option>
+								{% for group in groups %}
+							 		<option value ="{{ group.id }}" name="gid">{{ group.name }}</option>
+								{% endfor %}
+				            </select>
+						</div>
+		            </div>
+					-->
+		            <div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">月份</label>
+		            	<div class="col-md-8">
+							<div class='input-group date month' for="id_spoils_moth">
+				                <input type='text' class="form-control input-sm" name="spoils_moth" id="id_spoils_moth" value="{{ moth }}"/>
+				                <span class="input-group-addon">
+				                    <span class="glyphicon glyphicon-calendar"></span>
+				                </span>
+				            </div>
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">贡献分</label>
+		            	<div class="col-md-8">
+							<input class="form-control" name="contribution" id="id_contribution" value="{{ score_obj.contribution }}" maxlength="10" type="text" />
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">专业技能分</label>
+		            	<div class="col-md-8">
+							<input class="form-control" name="pro_skill" id="id_pro_skill" value="{{ score_obj.pro_skill }}" type="text" />
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">表现加分</label>
+		            	<div class="col-md-8">
+							<input class="form-control" id="id_performance" name="performance" value="{{ score_obj.performance }}" maxlength="10" type="text" />
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">打分理由</label>
+		            	<div class="col-md-8">
+							<textarea class="form-control input-sm" id="id_reason" name="reason" style="height:100px;">{{ score_obj.reason|default:"" }}</textarea>
+						</div>
+		            </div>
+				</form>
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	            <button type="button" class="btn btn-primary" id="id_save_spoils">保存</button>
+	          </div>
+	        </div>
+	        <!-- /.modal-content -->
+	      </div>
+	      <!-- /.modal-dialog -->
+	    </div>
+	</div>    
+    <table class="table" id="id_proguser">
+		<thead>
+			<tr>
+				<th>年</th>
+				<th>月</th>
+				<th>姓名</th>
+				<th>项目</th>
+				<th>贡献分</th>
+				<th>专业技能分</th>
+				<th>表现加分</th>
+				<th>打分理由</th>
+				<th>附加操作</th>				
+			</tr>
+		</thead>
+		{% for scoreinfo in scoreinfos %}
+			<!-- 是否发放，删除同伙 -->
+			{% if scoreinfo.is_live %}
+			<tr>
+    			<!-- 年份 -->
+    			<td>{{ scoreinfo.month.year }}年</td>
+    			<!-- 月份 -->
+    			<td>{{ scoreinfo.month.month }}月</td>
+    			<!-- 人员 -->
+    			<td>{{ scoreinfo.staff.last_name }}{{ scoreinfo.staff.first_name }}</td>
+    			<!-- 项目 -->
+    			<td>{{ scoreinfo.programinfo.name }}</td>
+				<!-- 组 -->
+    			<td>{{ scoreinfo.staff.group.name }}</td>
+    			<!-- 贡献分 -->
+    			<td>{{ scoreinfo.contribution }}</td>
+    			<!-- 专业技能分 -->
+    			<td>{{ scoreinfo.pro_skill }}</td>
+    			<!-- 表现加分 -->
+    			<td>{{ scoreinfo.performance }}</td>
+    			<!-- 打分理由 -->
+    			<td><a href="/bonus/programuserinfo/?do_what=modify&pid={{ pid }}&uid={{ scoreinfo.userinfo.id }}&month={{ scoreinfo.month|safe }}">查看</a></td>
+    			<!-- 附加操作 -->				    			
+    			<td>
+	    			<a href="/bonus/programuserinfo/?do_what=modify&pid={{ pid }}&uid={{ scoreinfo.userinfo.id }}&month={{ scoreinfo.month|safe }}">修改</a>
+	    			|<a href="/bonus/programuserinfo/?do_what=del&pid={{ pid }}&uid={{ scoreinfo.userinfo.id }}&month={{ scoreinfo.month|safe }}">删除</a>
+	    		</td>
+			</tr>
+			{% endif %}
+		{% endfor %}
+	</table>
+</div>
+
+
+<script type="text/javascript">
+	$(function () {
+	    $('.month').datetimepicker({
+	        locale: 'zh-cn',
+			format: 'YYYY-MM'
+	    });
+	});
+	
+	//callback handler for form submit
+	$("#id_frm_view_spoils").submit(function(e) {
+	  	alert("in frame view spoils click event");
+	    var postData = $(this).serializeArray();
+	    // console.log(postData);
+	    $("#btnSave").button("loading")
+	    var formURL = $(this).attr("action");
+	    $.ajax({
+	      url: formURL,
+	      type: "POST",
+	      data: postData,
+	      success: function(data, textStatus, jqXHR) {
+	        //data: return data from server
+	        $('#game').modal('hide');
+	        $("#btnSave").button("reset");
+	        location.reload(true);
+	      },
+	      error: function(jqXHR, textStatus, errorThrown) {
+	        alert("fail");
+	      }
+	    });
+	    e.preventDefault(); //STOP default action
+	    e.unbind(); //unbind. to stop multiple form submit.
+	});
+	$("#id_view_spoils_submit").click(function(e) {
+	  	alert("in view spoils click event");
+	    $("#id_frm_view_spoils").submit();
+	});
+	  
+	//callback handler for form submit
+	$("#id_frm_add_spoils").submit(function(e) {
+	    var postData = $(this).serializeArray();
+	    // console.log(postData);
+	    $("#btnSave").button("loading")
+	    var formURL = $(this).attr("action");
+	    $.ajax({
+	      url: formURL,
+	      type: "POST",
+	      data: postData,
+	      success: function(data, textStatus, jqXHR) {
+	        //data: return data from server
+	        $('#id_spoils_modal').modal('hide');
+	        $("#id_btn_save_spoils").button("reset");
+	        location.reload(true);
+	      },
+	      error: function(jqXHR, textStatus, errorThrown) {
+	        alert("fail");
+	      }
+	    });
+	    e.preventDefault(); //STOP default action
+	    e.unbind(); //unbind. to stop multiple form submit.
+	});
+	$("#id_save_spoils").click(function(e) {
+	  	alert("in click event");
+	    $("#id_frm_add_spoils").submit();
+	});
+</script>

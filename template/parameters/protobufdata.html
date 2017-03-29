@@ -1,0 +1,91 @@
+<script type="text/javascript">
+var Interval_time = 10000;
+var timehandler = setInterval(protobufdata,Interval_time);
+//执行URL
+var proto_url = "/parameters/{{ program.markid }}/{{ locale.markid }}/protobufdata/?procid={{ procid }}&reqmode=js&recreate=1";
+//是否自动访问
+var auto_visit = false;
+{% if ret == 1 %}
+	auto_visit = true;	
+{% endif %}
+function protobufdata(){
+	if (auto_visit){
+		$('#working').html('正在执行，请稍候 ...');
+		var params = "";
+		$.ajax({
+			url: proto_url,
+			type:'get',
+			dataType:'json',
+			data:params,
+			success:callback_protobufdata
+		});
+	}
+}
+
+//重新写文件HTML代码
+var recreate_html = "<p>";
+recreate_html += "&nbsp;<br/>";
+recreate_html += "<form method='GET' action='/parameters/{{ program.markid }}/{{ locale.markid }}/protobufdata/ >";
+recreate_html += "<input type='hidden' value='{{ procid }}' name='procid' id='idprocid' />";
+recreate_html += "<input type='hidden' value='1' name='recreate' id='idcreate' />";
+recreate_html += "<input type='submit' value='重新生成文件' class='submit_btn' />";
+recreate_html += "</form>";
+recreate_html += "</p>";
+
+function callback_protobufdata(data){
+	//alert(data);
+	var ret = data["ret"];
+	var html_str = ""; 
+	if (ret == 0 ){//执行成功，下载数据
+		proto_url = "/parameters/"+data["pid"]+"/"+data["localeid"]+"/protobufdata/?procid=0&reqmode=js&recreate=1";
+		html_str = "<p><a href='/protobuf/' target='_blank'>data.swf&nbsp;&nbsp;上下行文件下载</a></p>";
+		html_str += recreate_html;
+		$('#working').html(html_str);
+		auto_visit = false;
+	}
+	else if (ret == 1){//正在执行，等待下次询问
+		proto_url = "/parameters/"+data["pid"]+"/"+data["localeid"]+"/protobufdata/?procid="+data["procid"].toString()+"&reqmode=js&recreate=1";
+		//protobufdata();
+		auto_visit = true;
+	}
+	else if (ret == 2){//执行出错
+		proto_url = "/parameters/"+data["pid"]+"/"+data["localeid"]+"/protobufdata/?procid=0&reqmode=js&recreate=1";
+		html_str = "<p><b>对不起，出错了!</b><br/><span>错误信息：<br/>"+data["msg"]+"</span></p>";
+		html_str += recreate_html;
+		$('#working').html(html_str);
+		auto_visit = false;
+	}
+	else{
+		proto_url = "/parameters/"+data["pid"]+"/"+data["localeid"]+"/protobufdata/?procid=0&reqmode=js&recreate=1";
+		html_str = "<p><b>未知信息，请重新执行</b></p>";
+		html_str += recreate_html;
+		$('#working').html(html_str);
+		auto_visit = false;
+	}
+}
+
+</script>
+<div id="working">
+	{% if ret == 0 %}
+		<p><a href='/protobuf/'>data.swf&nbsp;&nbsp;上下行文件下载</a></p>
+	{% else %}{% if ret == 1 %}
+		<p>正在执行，请稍候 ...</p>
+	{% else %}{% if ret == 2 %}
+		<p>
+			<b>对不起，出错了!</b><br/>
+			<span>错误信息：<br/>&nbsp;&nbsp;{{ msg }}</span>
+		</p>
+	{% else %}
+		<p><b>未知信息，请重新执行</b></p>
+	{% endif %}{% endif %}{% endif %}
+	{% if ret != 1 %}
+		<p>
+			&nbsp;<br/>
+			<form method="GET" action="/parameters/{{ program.markid }}/{{ locale.markid }}/protobufdata/" >
+				<input type="hidden" value="{{ procid }}" name="procid" id="idprocid" />
+				<input type="hidden" value="1" name="recreate" id="idcreate" />
+				<input type='submit' value='重新生成文件' class="submit_btn" />
+		    </form>
+		</p>
+	{% endif %}
+</div>

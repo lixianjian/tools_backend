@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//Dtd XHTML 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>小黑屋年终抽奖</title>
+<style type="text/css">
+/***************新增样式ʽ******************/
+.yaojiang_info{width:1000px; height:131px; background-image: url(/media/images/lottery/2.gif); margin:0 auto;background-repeat: repeat-x;display:block;} 
+.yaojiang_beijing{width:1000px; height:131px; background-image: url(/media/images/lottery/2.gif); margin:0 auto;background-repeat: repeat-x;display:block;} 
+.yaojiang_bianliang{width:890px; height:90px; float:left; padding:18px 0 0 33px;margin:0;display:block;} 
+.yaojiang_bianliang img{width:68px; height:90px; float:left; padding:0 0 0 2px;margin:0;display:block; border:1px solid #000;}  
+.yaojiang_anniu{width:38px; height:38px; float:left; padding:40px 0 0 20px;margin:0;display:block; }
+.yaojiang_bianliang td{width:68px; height:90px; font-family: "Trebuchet MS", Arial, "宋体"; font-size:64px; text-align:center; color: #FFF;
+	background-image: url(/media/images/lottery/1.png); padding:0 0 0 0; margin:0; }
+.yaojiang_prize{width:1000px; height:100%; margin:0 auto; background-color: #FFF; display:block;}
+.yaojiang_prize_img{width:590px; height:100%; display:block;}
+.yaojiang_prize_intro{width:200px; height:100%; float:left; display:block;}
+</style>
+<script language="javascript" type="text/javascript" src="/media/JS/jquery-1.7.1.min.js"></script>
+<script language="javascript" type="text/javascript">
+//号码数量(长度)
+var num_len = {{ mobiles|length }};
+//摇号数组
+var numbers = [];//'4696','8769','6758','4877'
+//有效数组
+var effective = new Array();
+{% for mobile in mobiles %}
+	numbers.push('{{ mobile.mobile }}');
+	{% if not mobile.is_award %}
+		effective.push('{{ mobile.mobile }}');
+	{% endif %}
+{% endfor %}
+</script>
+</head>
+<body>
+<div class="dxq_jingpaiming_1">
+	<div class="yaojiang_beijing">
+		<div class="yaojiang_bianliang">
+			<!-- <img id="img_1" src="/media/images/lottery/39.gif"/>
+			<img id="img_2" src="/media/images/lottery/39.gif"/>
+			<img id="img_3" src="/media/images/lottery/39.gif"/>
+			<img id="img_4" src="/media/images/lottery/39.gif"/>
+			 -->
+			<table>
+				<tr>
+					<td><span id="img_1">0</span></td>
+					<td><span id="img_2">0</span></td>
+					<td><span id="img_3">0</span></td>
+					<td><span id="img_4">0</span></td>
+					<td><span id="img_5">0</span></td>
+					<td><span id="img_6">0</span></td>
+					<td><span id="img_7">0</span></td>
+					<td><span id="img_8">0</span></td>
+					<td><span id="img_9">0</span></td>
+					<td><span id="img_10">0</span></td>
+					<td><span id="img_11">0</span></td>
+				</tr>
+			</table>
+		</div>
+		<div class="yaojiang_anniu">
+			<img id="shanshuo" src="/media/images/lottery/16.gif" border="0"/>
+		</div>
+	</div>
+</div>
+
+<div class="dxq_paiming_hang" style="text-align:center;margin: 20px auto;">
+	<a id="startButton" href="javascript:start();"><img id="startButton_img" src="/media/images/lottery/1.gif" border="0"/></a>
+</div>
+
+<div style="width:1000px; height:50px; margin:0 auto; text-align:center;">
+	<p style='font-family: "Trebuchet MS", Arial, "宋体"; font-size:36px; text-align:center; color:#00C;'>
+		剩余【<span id="id_exist_len" style='font-size:54px; text-align:center; color:#FC0;'>{{ prizes_len|default:"0" }}</span>】个奖品
+	</p>
+</div>
+
+<div id="id_pize" class="yaojiang_prize" style="text-align:center;margin: 20px auto;">
+	<!-- 
+	<div id="id_prize_img" class="yaojiang_prize_img">
+		<img id="id_prize_img1" src="/media/images/lottery/4.gif">
+	</div>
+	<div id="id_prize_itro" class="yaojiang_prize_intro">
+		<p>简介</p>
+	</div>
+	 -->
+	<table width="1000px" height="300px">
+		<tr>
+			<td style="width:700px;height:400px;">
+				<img id="id_prize_img1" src="" width="700px" height="400px">
+			</td>
+			<td sytle="width:300px;">
+				<p id="id_prize_intro">
+				</p>
+			</td>
+		</tr>
+	</table>
+</div>
+<script type="text/javascript" src="/media/JS/lottery.js"></script>
+</body>
+</html>

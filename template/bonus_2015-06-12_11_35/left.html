@@ -1,0 +1,31 @@
+<div id="leftsider">
+  <h1>功能列表</h1>
+  <div class="boxcont">
+    <ul class="function">
+    	{% if user.is_staff %}
+        	<li class="type"><img src="/media/images/Article_li_img.png" /><a href="/admin/" target="_blanck">管理员登陆</a></li>
+        {% endif %}
+        {% if perms.auth.programuserinfo %}
+        	<li class="type"><img src="/media/images/Article_li_img.png" /><a href="/bonus/programuserinfo/">项目人员</a></li>
+        {% endif %}
+        <li class="type"><img src="/media/images/Article_li_img.png" /><a href="/bonus/mybonus/">查看奖金</a></li>
+        {% if perms.auth.view_all %}
+        	<li class="type"><img src="/media/images/Article_li_img.png" /><a href="/bonus/allbonus/">查看所有人</a></li>
+        {% endif %}
+        {% if perms.auth.add_bonusinfo %}
+        	<li class="type"><img src="/media/images/Article_li_img.png" /><a href="/bonus/sumbonus/">奖金总额</a></li>
+        {% endif %}
+        {% if perms.auth.add_tax %}
+        	<li class="type"><img src="/media/images/Article_li_img.png" /><a href="/bonus/taxinfo/">税金</a></li>
+        {% endif %}
+        <!-- <li class="type"><img src="/media/images/Article_li_img.png" /><a href="/bonus/alter_password/">修改密码</a></li>
+        <li class="type"><img src="/media/images/Article_li_img.png" /><a href="/bonus/quity/">退出后台</a></li>
+        -->
+	</ul>
+  </div>
+  <div class="bottom"></div>
+</div>
+
+<!-- 
+     <a href="javascrip:void(0)" onClick='javascript:alert("功能在开发中");'>{{ intro }}</a>
+ -->

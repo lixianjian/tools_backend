@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <title>Bootstrap, from Twitter</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- 新 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="../../media/bootstrap-3.3.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../media/bootstrap-3.3.0-dist/css/dashboard.css">
+    <!-- 可选的Bootstrap主题文件（一般不用引入） -->
+    <link rel="stylesheet" href="../../media/bootstrap-3.3.0-dist/css/bootstrap-theme.min.css">
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="../../media/JS/jquery-1.11.1.min.js"></script>
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="../../media/bootstrap-3.3.0-dist/js/bootstrap.min.js"></script>
+    <!-- 引用http://davidstutz.github.io/bootstrap-multiselect/ -->
+    <!-- Include the plugin's CSS and JS: -->
+    <script type="text/javascript" src="../../media/bootstrap-3.3.0-dist/js/bootstrap-multiselect.js"></script>
+    <link rel="stylesheet" href="../../media/bootstrap-3.3.0-dist/css/bootstrap-multiselect.css"
+    type="text/css">
+    <script type="text/javascript">
+      $('#example-multiple-selected').multiselect();
+    </script>
+    <!-- 引用http://akibjorklund.com/code/multiselectable -->
+    <script type="text/javascript" src="../../media/JS/multiselectable.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+      		        $('.multi').multiselectable();
+      		});
+      		
+             function GetInventory()
+             {
+               //var test_form = document.forms.test_form;
+               var s1 = document.getElementById("id_s1");
+               var s1Val = "";
+               var x = 0;
+               for (x=0;x<s1.length;x++)
+               {
+                  if (s1[x].selected)
+                  {
+                   //alert(test_form.s1[x].value);
+                   s1Val = s1[x].value + "," + s1Val;
+                  }
+               }
+               alert(s1Val);
+             }
+    </script>
+    <style type="text/css">
+      .multiselectable { width:500px; display:block; overflow: hidden; width: 100%; }
+      		.multiselectable select, .multiselectable div { width: 200px; float:left; }
+      		.multiselectable div * { display: block; margin: 0 auto; }
+      		.multiselectable div { display: inline; }
+      		.multiselectable .m-selectable-controls { margin-top: 3em; width: 50px; }
+      		.multiselectable .m-selectable-controls button { margin-top: 1em; }
+    </style>
+  </head>
+  
+  <body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <div>
+            <img src="../../media/images/darkhut_logo_sm.png" alt="小黑屋游戏" class="img-rounded"
+            style="">
+          </div>
+          <!-- <div draggable="true" style="">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+            data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a href="#">Project name</a>
+          </div>
+          -->
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right" role="form">
+            <div class="form-group">
+              <input type="text" placeholder="Email" class="form-control">
+            </div>
+            <div class="form-group">
+              <input type="password" placeholder="Password" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-success">Sign in</button>
+          </form>
+        </div>
+        <!--/.navbar-collapse -->
+      </div>
+    </nav>
+    <div class="container">
+      <!-- <div class="row">
+        
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active">
+              <a href="#">Overview <span class="sr-only">(current)</span></a>
+            </li>
+            <li>
+              <a href="#">Reports</a>
+            </li>
+            <li>
+              <a href="#">Analytics</a>
+            </li>
+            <li>
+              <a href="#">Export</a>
+            </li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li>
+              <a href="">Nav item</a>
+            </li>
+            <li>
+              <a href="">Nav item again</a>
+            </li>
+            <li>
+              <a href="">One more nav</a>
+            </li>
+            <li>
+              <a href="">Another nav item</a>
+            </li>
+            <li>
+              <a href="">More navigation</a>
+            </li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li>
+              <a href="">Nav item again</a>
+            </li>
+            <li draggable="true">
+              <a href="">One more nav</a>
+            </li>
+            <li>
+              <a href="">Another nav item</a>
+            </li>
+          </ul>
+        </div>
+        -->
+        <div>
+          <ul class="nav nav-pills">
+            <li class="active">
+              <a href="#">Home</a>
+            </li>
+            <li>
+              <a href="#">Profile</a>
+            </li>
+            <li>
+              <a href="#">Messages</a>
+            </li>
+          </ul>
+          <ul class="breadcrumb">
+            <li>
+              <a href="#">Home</a>
+            </li>
+            <li>
+              <a href="#">Library</a>
+            </li>
+            <li class="active">Data</li>
+          </ul>
+          <h1 class="page-header">Dashboard</h1>
+          <h2 class="sub-header">Section title</h2>
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                  <th>Header</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1,001</td>
+                  <td>Lorem</td>
+                  <td>ipsum</td>
+                  <td>dolor</td>
+                  <td>sit</td>
+                </tr>
+                <tr>
+                  <td>1,002</td>
+                  <td>amet</td>
+                  <td>consectetur</td>
+                  <td>adipiscing</td>
+                  <td>elit</td>
+                </tr>
+                <tr>
+                  <td>1,003</td>
+                  <td draggable="true">Integer</td>
+                  <td>nec</td>
+                  <td>odio</td>
+                  <td>Praesent</td>
+                </tr>
+                <tr>
+                  <td>1,003</td>
+                  <td>libero</td>
+                  <td>Sed</td>
+                  <td>cursus</td>
+                  <td>ante</td>
+                </tr>
+                <tr>
+                  <td>1,004</td>
+                  <td>dapibus</td>
+                  <td>diam</td>
+                  <td>Sed</td>
+                  <td>nisi</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <form class="form-horizontal" role="form" action="#" method="post" name="test_form">
+            <div class="form-group">
+              <div class="col-sm-2">
+                <label for="name" class="control-label">可多选的选择列表</label>
+              </div>
+              <div class="col-sm-10">
+                <select multiple="" class="multi" id="id_s1" name="s1" style="display: none;"
+                size="8">
+                  <option value="1">1</option>
+                  <option value="2" selected="selected">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+                <a href="javascript:void();" onclick="javascript: GetInventory();">test</a>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-2">
+                <label for="inputEmail3" class="control-label">Email</label>
+              </div>
+              <div class="col-sm-10">
+                <input type="email" class="form-control" id="inputEmail3" placeholder="Email" name="email">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-2">
+                <label for="inputPassword3" class="control-label">Password</label>
+              </div>
+              <div class="col-sm-10">
+                <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".ship_component_place-modal-lg">添加船舶部件位置信息表</button>
+            <div class="modal fade ship_component_place-modal-lg"
+            tabindex="-1" role="dialog" aria-labelledby="ship_component_place_largeModalLabel"
+            aria-hidden="true" id="id_ship_component_place_modal" style="display: none;">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">
+                      <span aria-hidden="true">×</span>
+                      <span class="sr-only">Close</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">船舶部件位置信息表</h4>
+                  </div>
+                  <div class="modal-body">
+                    <div class="form-group">
+                      <div class="col-sm-2">
+                        <label for="name" class="control-label">index</label>
+                      </div>
+                      <div class="col-sm-10">
+                        <input id="id_ship_component_place_index" name="index" style="width:150px;"
+                        value="0" type="text">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-2">
+                        <label for="name" class="control-label">type</label>
+                      </div>
+                      <div class="col-sm-10">
+                        <select class="form-control" id="id_ship_component_place_type" name="type">
+                          <option value="0">请选择一个大类说明表</option>
+                          <option value="1">商品类型</option>
+                          <option value="2">集装箱</option>
+                          <option value="3">船只部件材料</option>
+                          <option value="4">船只类型</option>
+                          <option value="5">干散货船可运送商品类型</option>
+                          <option value="6">集装箱船可运送商品类型</option>
+                          <option value="7">半潜船船可运送商品类型</option>
+                          <option value="8">重吊船船可运送商品类型</option>
+                          <option value="9">汽车船可运送商品类型</option>
+                          <option value="10">油轮可运送商品类型</option>
+                          <option value="11">邮轮可运送商品类型</option>
+                          <option value="13">图纸大类</option>
+                          <option value="14">船壳板大类</option>
+                          <option value="15">甲板大类</option>
+                          <option value="16">驾驶舱大类</option>
+                          <option value="17">发动机大类</option>
+                          <option value="18">螺旋桨大类</option>
+                          <option value="19">龙骨大类</option>
+                          <option value="20">保险柜大类</option>
+                          <option value="21">起重机大类</option>
+                          <option value="22">货舱大类</option>
+                          <option value="23">干散货通用类</option>
+                          <option value="24">船舶部件杂类大类</option>
+                          <option value="25">救生艇大类</option>
+                          <option value="26">空集</option>
+                          <option value="27">压载舱大类</option>
+                          <option value="28">重吊大类</option>
+                          <option value="29">重吊船通用类</option>
+                          <option value="30">农作物</option>
+                          <option value="31">纺织品</option>
+                          <option value="32">矿物</option>
+                          <option value="33">能源</option>
+                          <option value="34">建材</option>
+                          <option value="35">食品</option>
+                          <option value="36">工业品</option>
+                          <option value="37">工艺品</option>
+                          <option value="38">消费品</option>
+                          <option value="39">动物</option>
+                          <option value="40">交通工具</option>
+                          <option value="41">旅客</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-2">
+                        <label for="name" class="control-label">trans</label>
+                      </div>
+                      <div class="col-sm-10">
+                        <select class="form-control" id="id_ship_component_place_trans" name="trans">
+                          <option value="0">请选择一个部件位置坐标</option>
+                          <option value="1">干散货船船壳板</option>
+                          <option value="2">干散货船船甲板</option>
+                          <option value="3">干散货船驾驶舱</option>
+                          <option value="4">无坐标</option>
+                          <option value="5">干散货船救生艇1号位</option>
+                          <option value="6">干散货船救生艇2号位</option>
+                          <option value="7">干散货船杂类位置</option>
+                          <option value="8">干散货船螺旋桨1号位</option>
+                          <option value="9">干散货船螺旋桨2号位</option>
+                          <option value="10">干散货船螺旋桨3号位</option>
+                          <option value="11">干散货船螺旋桨4号位</option>
+                          <option value="12">干散货船吊臂1号位</option>
+                          <option value="13">干散货船吊臂2号位</option>
+                          <option value="14">干散货船吊臂3号位</option>
+                          <option value="15">干散货船吊臂4号位</option>
+                          <option value="16">干散货船货仓1号位</option>
+                          <option value="17">干散货船货仓2号位</option>
+                          <option value="18">干散货船货仓3号位</option>
+                          <option value="19">干散货船货仓4号位</option>
+                          <option value="20">干散货船货仓5号位</option>
+                          <option value="21">重吊船船壳板</option>
+                          <option value="22">重吊船甲板</option>
+                          <option value="23">重吊船驾驶舱</option>
+                          <option value="24">重吊船救生艇1号位</option>
+                          <option value="25">重吊船救生艇2号位</option>
+                          <option value="26">重吊船杂货位置</option>
+                          <option value="27">重吊船螺旋桨1号位</option>
+                          <option value="28">重吊船螺旋桨2号位</option>
+                          <option value="29">重吊船螺旋桨3号位</option>
+                          <option value="30">重吊船螺旋桨4号位</option>
+                          <option value="31">重吊船重吊1号位</option>
+                          <option value="32">重吊船重吊2号位</option>
+                          <option value="33">重吊船重吊3号位</option>
+                          <option value="34">重吊船重吊4号位</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-2">
+                        <label for="name" class="control-label">sn</label>
+                      </div>
+                      <div class="col-sm-10">
+                        <input id="id_ship_component_place_sn" name="sn" style="width:150px;"
+                        value="0" type="text">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <div class="col-sm-2">
+                        <label for="name" class="control-label">name</label>
+                      </div>
+                      <div class="col-sm-10">
+                        <input id="id_ship_component_place_name" name="name" style="width:150px;"
+                        value="" type="text">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:save_record('ship_component_place','index,type,trans,sn,name', 'name', 'id_ship_trans')">保存</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox">Remember me</label>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Sign in</button>
+              </div>
+            </div>
+          </form>
+          <form id="id_trans_form" class="form-horizontal" role="form">
+            <div class="form-group">
+              <div class="col-sm-2">
+                <label for="name" class="control-label">index</label>
+              </div>
+              <div class="col-sm-10">
+                <input id="id_ship_component_place_index" name="index" style="width:150px;" value="0" type="text">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-2">
+                <label for="name" class="control-label">type</label>
+              </div>
+              <div class="col-sm-10">
+                <select class="form-control" id="id_ship_component_place_type" name="type">
+                  <option value="0">请选择一个大类说明表</option>
+                  <option value="1">商品类型</option>
+                  <option value="2">集装箱</option>
+                  <option value="3">船只部件材料</option>
+                  <option value="4">船只类型</option>
+                  <option value="5">干散货船可运送商品类型</option>
+                  <option value="6">集装箱船可运送商品类型</option>
+                  <option value="7">半潜船船可运送商品类型</option>
+                  <option value="8">重吊船船可运送商品类型</option>
+                  <option value="9">汽车船可运送商品类型</option>
+                  <option value="10">油轮可运送商品类型</option>
+                  <option value="11">邮轮可运送商品类型</option>
+                  <option value="13">图纸大类</option>
+                  <option value="14">船壳板大类</option>
+                  <option value="15">甲板大类</option>
+                  <option value="16">驾驶舱大类</option>
+                  <option value="17">发动机大类</option>
+                  <option value="18">螺旋桨大类</option>
+                  <option value="19">龙骨大类</option>
+                  <option value="20">保险柜大类</option>
+                  <option value="21">起重机大类</option>
+                  <option value="22">货舱大类</option>
+                  <option value="23">干散货通用类</option>
+                  <option value="24">船舶部件杂类大类</option>
+                  <option value="25">救生艇大类</option>
+                  <option value="26">空集</option>
+                  <option value="27">压载舱大类</option>
+                  <option value="28">重吊大类</option>
+                  <option value="29">重吊船通用类</option>
+                  <option value="30">农作物</option>
+                  <option value="31">纺织品</option>
+                  <option value="32">矿物</option>
+                  <option value="33">能源</option>
+                  <option value="34">建材</option>
+                  <option value="35">食品</option>
+                  <option value="36">工业品</option>
+                  <option value="37">工艺品</option>
+                  <option value="38">消费品</option>
+                  <option value="39">动物</option>
+                  <option value="40">交通工具</option>
+                  <option value="41">旅客</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-2">
+                <label for="name" class="control-label">trans</label>
+              </div>
+              <div class="col-sm-10">
+                <select class="form-control" id="id_ship_component_place_trans" name="trans">
+                  <option value="0">请选择一个部件位置坐标</option>
+                  <option value="1">干散货船船壳板</option>
+                  <option value="2">干散货船船甲板</option>
+                  <option value="3">干散货船驾驶舱</option>
+                  <option value="4">无坐标</option>
+                  <option value="5">干散货船救生艇1号位</option>
+                  <option value="6">干散货船救生艇2号位</option>
+                  <option value="7">干散货船杂类位置</option>
+                  <option value="8">干散货船螺旋桨1号位</option>
+                  <option value="9">干散货船螺旋桨2号位</option>
+                  <option value="10">干散货船螺旋桨3号位</option>
+                  <option value="11">干散货船螺旋桨4号位</option>
+                  <option value="12">干散货船吊臂1号位</option>
+                  <option value="13">干散货船吊臂2号位</option>
+                  <option value="14">干散货船吊臂3号位</option>
+                  <option value="15">干散货船吊臂4号位</option>
+                  <option value="16">干散货船货仓1号位</option>
+                  <option value="17">干散货船货仓2号位</option>
+                  <option value="18">干散货船货仓3号位</option>
+                  <option value="19">干散货船货仓4号位</option>
+                  <option value="20">干散货船货仓5号位</option>
+                  <option value="21">重吊船船壳板</option>
+                  <option value="22">重吊船甲板</option>
+                  <option value="23">重吊船驾驶舱</option>
+                  <option value="24">重吊船救生艇1号位</option>
+                  <option value="25">重吊船救生艇2号位</option>
+                  <option value="26">重吊船杂货位置</option>
+                  <option value="27">重吊船螺旋桨1号位</option>
+                  <option value="28">重吊船螺旋桨2号位</option>
+                  <option value="29">重吊船螺旋桨3号位</option>
+                  <option value="30">重吊船螺旋桨4号位</option>
+                  <option value="31">重吊船重吊1号位</option>
+                  <option value="32">重吊船重吊2号位</option>
+                  <option value="33">重吊船重吊3号位</option>
+                  <option value="34">重吊船重吊4号位</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-2">
+                <label for="name" class="control-label">sn</label>
+              </div>
+              <div class="col-sm-10">
+                <input id="id_ship_component_place_sn" name="sn" style="width:150px;"
+                value="0" type="text">
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-2">
+                <label for="name" class="control-label">name</label>
+              </div>
+              <div class="col-sm-10">
+                <input id="id_ship_component_place_name" name="name" style="width:150px;"
+                value="" type="text">
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>

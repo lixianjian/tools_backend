@@ -1,0 +1,47 @@
+<div class="row">
+	<div class="bg-info">
+		<div class="col-md-8">
+			{% if not no_edit %}
+				{% if view_func.name == 'partner_program_country' %}
+					<a href="/{{ app }}/create_account/add/" class="btn btn-default btn-sm" role="button">添加{{ view_func.intro }}</a>
+				{% else %}
+					<a href="/{{ app }}/{{ view_func.name }}/add/" class="btn btn-default btn-sm" role="button">添加{{ view_func.intro }}</a>
+				{% endif %}
+			{% endif %}
+			<!-- <a href="/{{ app }}/{{ view_func.name }}/get/?export_csv=1" class="btn btn-default btn-sm" role="button">导出EXCEL</a> -->
+			<!-- <a href="#" class="btn btn-default btn-sm" role="button" onclick="javascript:view_all_event();">显示所有记录</a> -->
+		</div>
+		<div class="col-md-2">
+			<div class="btn-toolbar" role="toolbar" style="float:right;">
+			  <div class="btn-group-sm">
+			  	<a class="btn btn-default" role="button" href="/{{ app }}/{{ view_func.name }}/get/?page=1" title="第一页">&laquo;</a>
+			  	{% if datas.has_previous %}
+					<a class="btn btn-default" role="button" href="/{{ app }}/{{ view_func.name }}/get/?page={{ datas.previous_page_number }}" title="上一页"><</a>
+				{% else %}
+					<a class="btn btn-default" role="button" disabled="disabled" href="/{{ app }}/{{ view_func.name }}/get/?page={{ datas.previous_page_number }}" title="上一页"><</a>
+				{% endif %}
+			  	{% if datas.has_next %}
+					<a class="btn btn-default" role="button" href="/{{ app }}/{{ view_func.name }}/get/?page={{ datas.next_page_number }}" title="下一页">></a>
+				{% else %}
+					<a class="btn btn-default" role="button" disabled="disabled" href="/{{ app }}/{{ view_func.name }}/get/?page={{ datas.next_page_number }}" title="下一页">></a>
+				{% endif %}
+			  	<a class="btn btn-default" role="button" href="/{{ app }}/{{ view_func.name }}/get/?page={{ paginator.num_pages }}" title="最后一页">&raquo;</a>
+			  </div>
+			</div>
+		</div>
+		<div class="col-md-2">
+			<form method="GET" action="/{{ app }}/{{ view_func.name }}/get/" class="form-inline" role="form">
+				<div class="form-group">
+				    <span>({{ datas.number }}/{{ paginator.num_pages }})</span>
+				</div>
+				<div class="form-group">
+				    <span>Go</span>
+					<input type="text" name="page" size="1" placeholder="{{ datas.number }}" />
+				 </div>
+				<div class="form-group">
+					<input class="submit_btn" type="submit" value="确定" class="form-control" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

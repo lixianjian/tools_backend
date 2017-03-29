@@ -1,0 +1,81 @@
+//滚动速度
+var speed=10;
+//是否闪烁
+var shang=0;
+//定时器数组
+var interval_obj;
+//闪烁定时器
+var fla_inter_obj;
+//号码数量(长度)
+var num_len = 4;
+//中奖号码
+var number;
+//img对象数组
+var img_objs = [];
+//摇号数组
+var numbers = ['4696','8769','6758','4877'];
+//初始化img数组
+function set_img_objs(){
+	for (var i = 1; i < num_len + 1; i++){
+		//var _id = "img_"+i;
+		//alert(_id);
+		//var obj1 = document.getElementById(_id);
+		//alert(obj1);
+		img_objs.push(document.getElementById("img_"+i));
+	}
+}
+
+//获取随机值
+function GetRnd(min,max){
+	var offset = arguments[2] ? arguments[2] : 0;
+	return parseInt(Math.random()*(max-min+1)+offset);
+}
+
+//给img赋值
+function set_img(){
+	//alert(number);
+	for (var i = 0; i < number.length; i++){
+		//img_objs[i].src = GetRnd(4, 37, 4) + ".gif";
+		img_objs[i].src = "/media/images/lottery/"+number[i] + ".gif";
+	}
+}
+
+//获取获奖号码
+function set_number(){
+	number = numbers[GetRnd(0,numbers.length-1)];
+	//alert(number);
+}
+
+//摇号
+function Marquee() {
+	set_number();
+	set_img();
+}
+
+function flashLogo() {
+	var deng = document.getElementById("shanshuo");
+	if(shang == 0) {
+		deng.src = "/media/images/lottery/17.gif";
+		shang = 1;
+	} else {
+		deng.src = "/media/images/lottery/16.gif";
+		shang = 0;
+	}
+}
+
+function start() {
+	document.getElementById("startButton").href="javascript:void(null);";
+	set_img_objs();
+	Marquee();
+	interval_obj = setInterval(Marquee,speed);
+	fla_inter_obj = setInterval(flashLogo, 100);	
+	setTimeout("stop()", 3000);
+}
+
+function stop() {
+	document.getElementById("startButton").href="javascript:start();";
+	clearInterval(interval_obj);
+	Marquee();
+	clearInterval(fla_inter_obj);
+	document.getElementById("shanshuo").src = "/media/images/lottery/17.gif";
+}

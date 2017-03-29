@@ -1,0 +1,28 @@
+  <div class="masthead">
+  	<h3 class="text-muted">{{ sys_title }}</h3>
+    <ul class="nav nav-tabs" role="tablist">
+    	{% for func in funcs %}
+	    	{% if func.name == view_func.name %}
+		    	<li class="active">
+			    	<a href="/{{ app }}/{{ func.name }}/">{{ func.intro }} <span class="sr-only">(current)</span></a>
+			    </li>
+		    {% else %}
+		    	<li role="presentation">
+			    	<a href="/{{ app }}/{{ func.name }}/">{{ func.intro }}</a>
+			    </li>
+		    {% endif %}
+		{% endfor %}
+		 
+		<li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">分赃 <span class="caret"></span></a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="/bonus/programuserinfo/">项目人员</a></li>
+            <li><a href="/bonus/mybonus/">查看奖金</a></li>
+            <li><a href="/bonus/allbonus/">查看所有人</a></li>
+            <li><a href="/bonus/taxinfo/">税金</a></li>
+          </ul>
+        </li>
+       <!-- -->
+    </ul>
+  </div>
+  

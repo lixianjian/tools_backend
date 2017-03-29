@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>划线</title>
+<!--[if lte IE 8]><![endif]-->
+<script language="javascript" type="text/javascript" src="../../media/JS/flot/excanvas.min.js"></script>
+<script language="javascript" type="text/javascript" src="../../media/JS/flot/jquery.js"></script>
+<script language="javascript" type="text/javascript" src="../../media/JS/flot/jquery.flot.js"></script>
+<script>
+$(function () {
+	var	d2 = [["2014-03-21",[[2012, 0]]], ["2014-03-22",[[2013, 2]]], ["2014-03-23",[[2014,10]]]];
+	//var d2	= JSON.parse('{{ l_datas|safe }}');
+	/* '{/{ levels_str|safe }/}''{/{ levels_str|addslashes }/}'	
+	{% autoescape off %}  
+	    Hello {{ levels_str }}  
+	{% endautoescape %} 
+	*/
+	var	datas	= [];
+	for (var i = 0; i < d2.length; i++) {
+		//alert(d2[i][1])
+		var data = { data: d2[i][1], 
+					label: d2[i][0], 
+					//color: "#333", 
+					lines: { show: true }, 
+					points: { show: true }
+					};
+		datas.push(data);
+	}			
+	var options	= {series: {
+					   lines: { show: true },
+					   points: { show: true }
+				   		},
+               	   grid: { 
+				   		hoverable: true, 
+						clickable: true 
+						},
+				   legend: {
+				   		show: true, 
+						container: $("#overviewLegend") 
+						},
+					xaxis: { tickFormatter: function (v) { return v; } },
+					yaxis: { tickDecimals: 0 },
+					};
+	var plot = $.plot($("#placeholder"), datas, options);//, { yaxis: { max: 1 } }
+	function showTooltip(x, y, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            opacity: 0.80
+        }).appendTo("body").fadeIn(200);
+    }
+
+	var previousPoint = null;
+    $("#placeholder").bind("plothover", function (event, pos, item) {
+        //$("#x").text(pos.x.toFixed(2));
+        //$("#y").text(pos.y.toFixed(2));
+
+        //if ($("#enableTooltip:checked").length > 0) {
+            if (item) {
+                if (previousPoint != item.dataIndex) {
+                    previousPoint = item.dataIndex;
+                    
+                    $("#tooltip").remove();
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1].toFixed(2);
+                    
+                    showTooltip(item.pageX, item.pageY,
+                                item.series.label + "(" + x + ", " + y + ")");
+                }
+            }
+            else {
+                $("#tooltip").remove();
+                previousPoint = null;            
+            }
+        //}
+    });
+
+    $("#placeholder").bind("plotclick", function (event, pos, item) {
+        if (item) {
+            $("#clickdata").text("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
+            plot.highlight(item.series, item.datapoint);
+        }
+    });
+});
+</script>
+</head>
+<body>
+<div id="rightsider">	
+	<div id="placeholder" style="width:600px;height:400px;"></div>
+	<div id="overviewLegend" style="width:100px;height:100px;"></div>
+</div>

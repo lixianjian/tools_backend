@@ -1,0 +1,57 @@
+<div class="data_title">
+	<p>
+		欢迎[&nbsp;<span style="color:#390;"><b>{{ user.last_name }}{{ user.first_name }}</b></span>&nbsp;]登陆&nbsp;&nbsp;&nbsp;&nbsp;
+		<a href="/bonus/alter_password/">修改密码</a>&nbsp;&nbsp;
+		<a href="/bonus/quity/">注销</a>&nbsp;&nbsp;
+	</p>
+</div>
+
+<div id="form_table">
+	<form action="/bonus/{{ func }}/" method="post">{%csrf_token%}
+		<table style="border:1px solid #000;" class="regist_table">
+	    	<tr>
+	    		<td class="right_td">月份：</td>
+	    		<td class="left_td">
+	    			<!-- <input name="start_month" style="width:150px;" value="{{ start_month }}" maxlength="7" type="text" /> -->
+	    			<input class="Wdate" name="month" onClick="WdatePicker({dateFmt:'yyyy-MM'})" style="width:150px;" value="{{ month }}" maxlength="7" type="text" />
+	    			(示例：2012-09)
+	    		</td>
+	    	</tr>
+	    	<tr>
+	    		<td class="right_td"><input type='submit' value='提交' class="btn" /></td>
+	    		<td class="left_td">
+	    			{% if tips %}
+						<span style="color:#F00;">{{ tips }}</span>
+					{% endif %}
+	    		</td>
+	    	</tr>
+		</table>
+    </form>
+</div>
+
+{% if datas %}
+	<div>
+		<!-- <p>分赃扣税：根据2011年度个人所得税规定计算，这里只计算了"分赃"可能扣除税收。最终所得="分赃"+工资-个人所得税</p> -->
+		{% if func == 'mybonus' %}
+			<p>
+				&nbsp;&nbsp;点击字段“用户总分”链接可查看得分原因<br/>
+				&nbsp;&nbsp;点击字段“项目总分”链接可查看项目分配说明<br/>
+				&nbsp;&nbsp;最后所得经过四舍五入的，单位：元<br/><br/>				
+			</p>
+		{% endif %}
+		<table class="data">
+			<tr>
+			{% for field in title %}
+				<th>{{ field }}</th>
+			{% endfor %}
+			</tr>
+			{% for data in datas %}
+				<tr>
+	    			{% for value in data %}
+	    				<td>{{ value|safe }}</td>
+	    			{% endfor %}
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{% endif %}

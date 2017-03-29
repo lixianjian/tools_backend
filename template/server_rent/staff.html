@@ -1,0 +1,118 @@
+{% if do_what == 'get' %}
+	<div>
+		<table class="data">
+			<tr>
+				<th>编辑</th>
+			{% for field in fields %}
+				<th>{{ field }}</th>
+			{% endfor %}
+			</tr>
+			{% for data in datas %}
+				<tr>
+					<!-- 删除 -->
+					<td>
+				    	<a href="/rent/{{ action }}/?do_what=modify&recordid={{ data.id }}&page={{ datas.number }}">编辑</a>
+				    </td>
+					<!-- 名称 -->
+				    <td>{{ data.user.username }}</td>
+				    <!-- 真实姓名 -->
+				    <td>{{ data.user.last_name }}{{data.user.first_name }}</td>
+				    <!-- 公司 -->
+				    <td>{{ data.company.name }}</td>
+				    <!-- 负责人 -->
+				    <td>
+				    	{% if data.is_charge %}
+				    		是
+				    	{% else %}
+				    		否
+				    	{% endif %}
+				    </td>
+				    <!-- 其他操作 -->
+				    <td>
+				    	<a href="/rent/{{ action }}/?do_what=delete&recordid={{ data.id }}&page={{ datas.number }}">删除</a>
+				    </td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{% else %}
+	<div id="form_table">
+		<form action="{{ form_action }}" method="post">{%csrf_token%}
+			<table style="border:1px solid #000;" class="regist_table">
+				<tr>
+					<td class="right_td">用户名:</td>
+					<td class="left_td">
+		                <input id="id_username" name="username" style="width:150px;" type="text" maxlength="30" />
+		                <p class="help">&nbsp;&nbsp;必填。不多于30个字符。只能用字母、数字和字符 @/./+/-/_ 。</p>
+		            </td>
+				</tr>
+		    	<tr>
+		    		<td class="right_td">密码：</td>
+		    		<td class="left_td">
+		    			<input id="id_password1" name="password1" style="width:150px;" type="password" />
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td class="right_td">确认密码：</td>
+		    		<td class="left_td">
+		    			<input id="id_password2" name="password2" style="width:150px;" type="password" />
+		    			<p class="help">&nbsp;&nbsp;为了校验，输入与上面相同的密码。</p>
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td class="right_td">姓氏：</td>
+		    		<td class="left_td">
+		    			<input id="id_last_name" name="last_name" style="width:150px;" type="text" />
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td class="right_td">名字：</td>
+		    		<td class="left_td">
+		    			<input id="id_firt_name" name="first_name" style="width:150px;" type="text" />
+		    		</td>
+		    	</tr>
+		    	{% if perms.add_company %}
+			    	<tr>
+					    <td class="right_td">公司：</td>
+			    		<td class="left_td">
+			    			<select id="id_company" name="company" style="width:150px;height:20px;">
+				            	<option value="">请选择一个公司</option>
+				            	{% for company in companys %}
+				            		{% if company.id == datas.company %}
+				            			<option value="{{ company.id }}"  selected="selected">{{ company.name }}</option>
+				            		{% else %}
+							        	<option value="{{ company.id }}">{{ company.name }}</option>
+							        {% endif %}
+					            {% endfor %}
+				            </select>
+			    		</td>
+			    	</tr>
+			    {% else %}
+			    	<input id="id_company" name="company" style="width:150px;" type="hidden" value="{{ staff.company.id }}" />
+			    {% endif %}
+		    	<tr>
+		    		<td class="right_td">是否负责人：</td>
+		    		<td class="left_td">
+				 		<label style="width:150px;float:left;background-color:#CCC;margin-right:2px;margin-bottom:2px;padding-left:5px;">
+				 			{% if datas.charge %}
+				 				<input id="id_charge" name="charge" value="1" type="checkbox" checked="checked" />
+				 			{% else %}
+				 				<input id="id_charge" name="charge" value="1" type="checkbox" />
+				 			{% endif %}
+				 			<span style="color:#000;">负责人</span>
+				 		</label>
+				 		<span style="color:#F00;">(默认为普通职员)</span>
+		    		</td>
+		    	</tr>
+		    	<tr>
+		    		<td class="right_td"><input type='submit' value='提交' class="btn" /></td>
+		    		<td class="left_td">
+		    			{% if tips %}
+							<span style="color:#F00;">{{ tips }}</span>
+						{% endif %}
+		    		</td>
+		    	</tr>
+			</table>
+	    </form>
+	</div>
+{% endif %}

@@ -1,0 +1,26 @@
+<DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+    google.load('visualization', '1.0');
+    function drawVisualization() {
+      google.visualization.drawChart({
+         "containerId": "visualization_div",
+         "dataSourceUrl": "https://spreadsheets.google.com/a/google.com/tq?key=pCQbetd-CptGXxxQIG7VFIQ&pub=1",
+         "query":"SELECT A,D WHERE D > 100 ORDER BY D",
+         "refreshInterval": 5,
+         "chartType": "Table",
+         "options": {
+            "alternatingRowStyle": true,
+            "showRowNumber" : true
+         }
+       });
+    }
+    google.setOnLoadCallback(drawVisualization);
+  </script>
+  </head>
+  <body style="font-family: Arial;border: 0 none;">
+    <div id="visualization_div" style="width: 600px; height: 400px;"></div>
+  </body>
+</html>

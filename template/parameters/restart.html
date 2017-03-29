@@ -1,0 +1,26 @@
+<script type="text/javascript">
+//执行URL
+var proto_url = "/parameters/{{ program.markid }}/{{ locale.markid }}/restart/?force=1";
+function restart(){
+	//$('#working').html('正在执行，请稍候 ...');
+	$('#working').html('<a href="javascript:void();"><input type="button" value="重启" class="submit_btn"  onclick="javascript:restart();" /></a>');
+	var params = "";
+	$.ajax({
+		url: proto_url,
+		type:'get',
+		dataType:'text',
+		data:params,
+		success:callback_restart
+	});
+}
+
+function callback_restart(data){
+	$('#working').html('<a href="javascript:void();"><input type="button" value="重启" class="submit_btn"  onclick="javascript:restart();" /></a>');
+}
+
+</script>
+<div id="working">
+	<p>
+		<a href="javascript:void();"><input type='button' value='重启' class="submit_btn"  onclick="javascript:restart();" /></a>
+	</p>
+</div>

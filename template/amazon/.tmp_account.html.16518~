@@ -1,0 +1,167 @@
+<div class="row">
+	<div class="col-md-6">
+		<div>
+			<h4><span>预付款余额：{{ balance|default:"0.00" }}</span></h4>
+			<div class="row">
+				<div class="col-md-6 col-md-offset-1">
+					<div class="row">
+						<div class="col-md-12" style="margin-bottom:5px;">
+			        		<b>最近5日预付款消费</b>
+						</div>
+						<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+							<span>2015-05-25</span>
+						</div>
+						<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+							<span>$1,750.00</span>
+						</div>
+						<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+							<span>2015-05-24</span>
+						</div>
+						<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+							<span>$1,250.00</span>
+						</div>
+						<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+							<span>2015-05-24</span>
+						</div>
+						<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+							<span>$1,250.00</span>
+						</div>
+						<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+							<span>2015-05-24</span>
+						</div>
+						<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+							<span>$1,250.00</span>
+						</div>
+						<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+							<span>2015-05-24</span>
+						</div>
+						<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+							<span>$1,2500.00</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div>
+			<h4><span>每月详单导出</span></h4>
+			<!-- Default panel contents -->
+			<p>
+				<form role="form" id="frmAddUser" action="/api/add_user" method="POST" class="form-inline">
+		        	<div class="form-group">
+		        		<label>选择月份：</label>
+		                <div class='input-group date' id="id_export_day">
+		                    <input type='text' class="form-control input-sm" name="export_day" value="{{ day }}"/>
+		                    <span class="input-group-addon">
+		                        <span class="glyphicon glyphicon-calendar"></span>
+		                    </span>
+		                </div>
+					</div>
+		      		<button type="submit" class="btn btn-default input-sm">导出</button>
+				</form>
+			</p>
+		</div>
+	</div>
+	<div class="col-md-6">
+		<div>
+			<h4><span>区间费用情况</span></h4>
+			<!-- <a class="btn btn-primary" href="#" role="button">充值</a> -->
+			<p>
+				<form role="form" id="frmAddUser" action="/api/add_user" method="POST" class="form-inline">
+	            	<div class="form-group">
+	            		<label>选择周期：</label>
+		                <div class='input-group date' id="id_start_day">
+		                    <input type='text' class="form-control input-sm" name="start_day" value=""/>
+		                    <span class="input-group-addon">
+		                        <span class="glyphicon glyphicon-calendar"></span>
+		                    </span>
+		                </div>
+					</div>
+              		<div class="form-group">
+              			<label>-</label>
+		                <div class='input-group date' id='id_end_day'>
+		                    <input type='text' class="form-control input-sm" name="end_day" value=""/>
+		                    <span class="input-group-addon">
+		                        <span class="glyphicon glyphicon-calendar"></span>
+		                    </span>
+		                </div>
+		            </div>
+					<button type="submit" class="btn btn-default input-sm">查看</button>
+					<div class="form-group">
+		              	<label>计算单位：</label>
+						<div class="form-group">
+		              		<span>$</span>
+						</div>
+		            </div>
+				</form>
+				
+			</p>
+			<div>
+				<div class="row">
+					<div class="col-md-6 col-md-offset-1">
+						<div class="row">
+							<div class="col-md-12" style="margin-bottom:5px;">
+				        		<b>营运费用</b>
+							</div>
+							<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+								<span>开发提成</span>
+							</div>
+							<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+								<span style="color: red;">&nbsp;&nbsp;(120,000.00)&nbsp;&nbsp;</span>
+							</div>
+							<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+								<span>服务器成本</span>
+							</div>
+							<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+								<span style="color: red;">&nbsp;&nbsp;(37,200.00)&nbsp;&nbsp;</span>
+							</div>							
+							<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+								<span>其他成本</span>
+							</div>
+							<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+								<span style="border-bottom: 1px solid;">&nbsp;&nbsp;<font color="red">(30,000.00)</font>&nbsp;&nbsp;</span>
+							</div>							
+							<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+								<span>产生费用总计</span>
+							</div>
+							<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+								<span style="border-bottom: double 3px;">&nbsp;&nbsp;<font color="red">(187,200.00)</font>&nbsp;&nbsp;</span>
+							</div>
+							
+							<div class="col-md-12" style="margin-top: 5px; margin-bottom:5px;">
+				        		<b>预付款变动</b>
+							</div>
+							<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+								<span>期初预付款</span>
+							</div>
+							<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+								<td><span>&nbsp;&nbsp;112,800.00&nbsp;&nbsp;</span></td>
+							</div>
+							<div class="col-md-6" style="text-indent:1em; margin-bottom:5px;">
+								<span>预付款充值</span>
+							</div>
+							<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+								<span>&nbsp;&nbsp;(250,000.00)&nbsp;&nbsp;</span>
+							</div>
+							
+							<div class="col-md-6" style="margin-top: 5px; margin-bottom:5px;">
+				        		<b>预付款变动</b>
+							</div>
+							<div class="col-md-6" style="text-align:right; margin-bottom:5px;">
+								<span style="border-bottom: double 3px;">&nbsp;&nbsp;175,600.00&nbsp;&nbsp;</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $('.date').datetimepicker({
+            locale: 'zh-cn',
+			format: 'YYYY-MM-DD'
+        });
+    });
+</script>

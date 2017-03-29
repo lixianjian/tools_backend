@@ -1,0 +1,516 @@
+<!-- <div class="data_title">
+	<p>
+		欢迎[&nbsp;<span style="color:#390;"><b>{{ user.last_name }}{{ user.first_name }}</b></span>&nbsp;]登陆&nbsp;&nbsp;&nbsp;&nbsp;
+		<a href="/bonus/alter_password/">修改密码</a>&nbsp;&nbsp;
+		<a href="/bonus/quity/">注销</a>&nbsp;&nbsp;
+	</p>
+</div>
+ -->
+
+<div class="panel panel-default">
+	<div class="panel-heading">项目同伙</div>
+	<div class="panel-body">
+		<form class="form-inline" name="search" action="/bonus/programuserinfo/" method="post" id="id_frm_view_spoils">{% csrf_token %}
+		  <div class="form-group">
+		    <label for="pid">项目</label>
+			<input type="hidden" id="id_view_do_what" name="do_what" value="add" />
+		    <select id="id_view_pid" name="pid" class="form-control input-sm" style="width:210px;">
+				<!-- <option value ="0">-----请选择项目-----</option> -->
+		        {% for pprogram in pprograms %}
+		        	{% if pprogram.program.id == pid %}
+		        		<option value ="{{ pid }}" selected="selected">{{ pprogram.program.name }}</option>
+		        	{% else %}
+						<option value ="{{ pprogram.program.id }}">{{ pprogram.program.name }}</option>
+					{% endif %}
+				{% endfor %}
+			</select>
+		  </div>
+		  <div class="form-group">
+		    <label for="month">月份</label>
+		    <div class='input-group date month' for="id_view_month">
+                <input type='text' class="form-control input-sm" name="month" id="id_view_month" value="{{ month }}"/>
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+		  </div>
+		  <button type="submit" class="btn btn-default input-sm" id="id_view_spoils_submit">查看项目同伙</button>
+		  <!-- <a href="/bonus/programuserinfo/?do_what=get&pid={{ pid }}" style="text-decoration: none;"> -->
+		  <button  type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#id_spoils_modal">增加项目同伙</button>
+		  <!-- </a> -->
+		  <button type="button" class="btn btn-primary btn-sm" id="id_copy_spoils_submit">复制上月项目同伙</button>
+		</form>
+		<div class="modal fade" id="id_spoils_modal" tabindex="-1" role="dialog" aria-labelledby="spoilsModalLabel" aria-hidden="true" style="display: none;">
+	      <div class="modal-dialog">
+	        <div class="modal-content">
+	          <div class="modal-header">
+	            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	            <h4 class="modal-title" id="myModalLabel">增加项目同伙</h4>
+	          </div>
+	          <div class="modal-body">
+				<form role="form" id="id_frm_add_spoils" action="/bonus/programuserinfo/" method="POST" class="form-horizontal">{%csrf_token%}
+		            <div class="form-group form-group-sm">
+		              	<label class="col-md-4 control-label" style="text-align: left;">项目</label>
+						<div class="col-md-8">
+							<input type="hidden" id="id_do_what" name="do_what" value="add" />
+							<!-- 
+							<input type="hidden" id="id_add_pid2" name="pid" value="0" />
+							<input class="form-control" type="text" id="id_add_pname2" name="pname" value="项目不能为空，请先返回主页选择项目" readonly/>
+							<p class=="text_help">如需修改项目请返回主页，在下拉框中修改，然后到此弹窗中修改</p>
+							-->
+							<select id="id_add_pid" name="pid" class="form-control input-sm">
+								<!-- <option value ="0">--- 请选择项目 ---</option> -->
+						        {% for pprogram in pprograms %}
+									{% if pprogram.program.id == pid %}
+										<option value ="{{ pprogram.program.id }}" selected="selected">{{ pprogram.program.name }}</option>
+									{% else %}
+										<option value ="{{ pprogram.program.id }}">{{ pprogram.program.name }}</option>
+									{% endif %}
+								{% endfor %}
+							</select>
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		              	<label class="col-md-4 control-label" style="text-align: left;">同伙</label>
+						<div class="col-md-8">
+							<select id="id_uid" name="uid" class="form-control input-sm">					    				
+			    				<!-- <option value ="0" name="uid">--- 请选择一个同伙 ---</option> -->
+								{% for staff in staffs %}
+							 		<option value ="{{ staff.id }}" name="uid">{{ staff.staff.last_name }}{{ staff.staff.first_name }}</option>
+								{% endfor %}
+				            </select>
+						</div>
+		            </div>
+		            <!-- <div class="form-group form-group-sm">
+		              	<label class="col-md-4 control-label" style="text-align: left;">组</label>
+						<div class="col-md-8">
+		              		<select id="id_gid" name="gid" class="form-control input-sm">					    				
+			    				<option value ="0" name="gid">--- 请选择一个组 ---</option>
+								{% for group in groups %}
+							 		<option value ="{{ group.id }}" name="gid">{{ group.name }}</option>
+								{% endfor %}
+				            </select>
+						</div>
+		            </div>
+					-->
+		            <div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">月份</label>
+		            	<div class="col-md-8">
+							<div class='input-group date month' for="id_spoils_month">
+				                <input type='text' class="form-control input-sm" name="month" id="id_spoils_month" value="{{ month }}"/>
+				                <span class="input-group-addon">
+				                    <span class="glyphicon glyphicon-calendar"></span>
+				                </span>
+				            </div>
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">贡献分</label>
+		            	<div class="col-md-8">
+							<input class="form-control" name="contribution" id="id_contribution" value="{{ score_obj.contribution }}" maxlength="10" type="text" />
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">专业技能分</label>
+		            	<div class="col-md-8">
+							<input class="form-control" name="pro_skill" id="id_pro_skill" value="{{ score_obj.pro_skill }}" type="text" />
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">表现加分</label>
+		            	<div class="col-md-8">
+							<input class="form-control" id="id_performance" name="performance" value="{{ score_obj.performance }}" maxlength="10" type="text" />
+						</div>
+		            </div>
+					<div class="form-group form-group-sm">
+		            	<label class="col-md-4 control-label" style="text-align: left;">打分理由</label>
+		            	<div class="col-md-8">
+							<textarea class="form-control input-sm" id="id_reason" name="reason" style="height:100px;">{{ score_obj.reason|default:"" }}</textarea>
+						</div>
+		            </div>
+				</form>
+	          </div>
+	          <div class="modal-footer">
+	            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	            <button type="button" class="btn btn-primary" id="id_save_spoils">保存</button>
+	          </div>
+	        </div>
+	        <!-- /.modal-content -->
+	      </div>
+	      <!-- /.modal-dialog -->
+	    </div>
+		<hr/>
+	    <table class="table" id="id_score_table" style="clear: both; zoom: 1;">
+			<thead>
+				<tr>
+					
+					<th>年</th>
+					<th>月</th>
+					<th>姓名</th>
+					<th>项目</th>
+					<th>组</th>
+					<th>贡献分</th>
+					<th>专业技能分</th>
+					<th>表现加分</th>
+					<th>打分理由</th>
+					<th>附加操作</th>				
+				</tr>
+			</thead>
+			{% for scoreinfo in scoreinfos %}
+				<!-- 是否发放，删除同伙 -->
+				{% if scoreinfo.is_live %}
+				<tr id="id_score_tr_{{ scoreinfo.id }}">
+					
+	    			<!-- 年份 -->
+	    			<td>{{ scoreinfo.month.year }}年</td>
+	    			<!-- 月份 -->
+	    			<td>{{ scoreinfo.month.month }}月</td>
+	    			<!-- 人员 -->
+	    			<td>{{ scoreinfo.staff.staff.last_name }}{{ scoreinfo.staff.staff.first_name }}</td>
+	    			<!-- 项目 -->
+	    			<td>{{ scoreinfo.program.name }}</td>
+					<!-- 组 -->
+	    			<td>{{ scoreinfo.staff.group.name }}</td>
+	    			<!-- 贡献分 -->
+	    			<td id="id_score_contribution_{{ scoreinfo.id }}">{{ scoreinfo.contribution }}</td>
+	    			<!-- 专业技能分 -->
+	    			<td id="id_score_pro_skill_{{ scoreinfo.id }}">{{ scoreinfo.pro_skill }}</td>
+	    			<!-- 表现加分 -->
+	    			<td id="id_score_performance_{{ scoreinfo.id }}">{{ scoreinfo.performance }}</td>
+	    			<!-- 打分理由 -->
+	    			<td id="id_score_reason_{{ scoreinfo.id }}"><a href="javascript: void();" title="{{ scoreinfo.reason }}">{{ scoreinfo.reason|default:""|truncatechars:8 }}</a></td>
+	    			<!-- 附加操作 -->				    			
+	    			<td>
+		    			<a href="javascript: void();" onclick="javascript: modify_score(sid='{{ scoreinfo.id }}', pid='{{ pid }}', uid='{{ scoreinfo.staff.id }}', month='{{ scoreinfo.month|safe }}'); return false;">修改</a>
+		    			<a href="javascript: void();" onclick="javascript: del_score(sid='{{ scoreinfo.id }}', pid='{{ pid }}', uid='{{ scoreinfo.staff.id }}', month='{{ scoreinfo.month|safe }}'); return false;">删除</a>
+		    		</td>
+				</tr>
+				{% endif %}
+			{% endfor %}
+		</table>
+	</div>
+</div>
+
+<!-- ############## 全局变量 ################## -->
+<script type="text/javascript">
+	//将打分表中的数据转换成字典，用于修改功能
+	var scores = {};
+	{% for scoreinfo in scoreinfos %}
+		scores["{{ scoreinfo.id }}"] = {//"year": "{{ scoreinfo.month.year }}",
+										//"month": "{{ scoreinfo.month.month }}",
+										"staff": ["{{ scoreinfo.staff.id }}", "{{ scoreinfo.staff.staff.last_name }}{{ scoreinfo.staff.staff.first_name }}"],
+										"program": ["{{ scoreinfo.program.id }}", "{{ scoreinfo.program.name }}"],
+										//"group": "{{ scoreinfo.staff.group.name }}",
+										"contribution": "{{ scoreinfo.contribution }}",
+										"pro_skill": "{{ scoreinfo.pro_skill }}",
+										"performance": "{{ scoreinfo.performance }}",
+										"reason": "{{ scoreinfo.reason }}"
+										};
+	{% endfor %}
+	//修改记录ID
+	var mod_sid = "0";
+</script>
+
+<!-- ############## 功能实现  ################## -->
+<script type="text/javascript">
+	$(function () {
+	    $('.month').datetimepicker({
+	        locale: 'zh-cn',
+			format: 'YYYY-MM'
+	    });
+	});
+	
+	//选择项目联动
+	$("#id_view_pid").change(function(e) {
+	  	//alert("in view program change event");
+		$("#id_add_pid").val($("#id_view_pid").val());
+		//$("#id_add_pname").val($("#id_view_pid").find("option:selected").text());
+		//alert(x);
+	});
+	
+	/*	
+	 * 因为时间原因暂时没能实现JS获取同伙打分信息，依然使用form表单跳转方式，留待以后修改
+	//callback handler for form submit
+	$("#id_frm_view_spoils").submit(function(e) {
+	  	alert("in frame view spoils click event");
+	    var postData = $(this).serializeArray();
+	    // console.log(postData);
+	    $("#btnSave").button("loading")
+	    var formURL = $(this).attr("action");
+	    $.ajax({
+	      url: formURL,
+	      type: "POST",
+	      data: postData,
+	      success: function(data, textStatus, jqXHR) {
+	        //data: return data from server
+	        $('#game').modal('hide');
+	        $("#btnSave").button("reset");
+	        location.reload(true);
+	      },
+	      error: function(jqXHR, textStatus, errorThrown) {
+	        alert("fail");
+	      }
+	    });
+	    e.preventDefault(); //STOP default action
+	    e.unbind(); //unbind. to stop multiple form submit.
+	});
+	//查看项目同伙
+	$("#id_view_spoils_submit").click(function(e) {
+	  	alert("in view spoils click event");
+	    $("#id_frm_view_spoils").submit();
+	});
+	*/
+	
+	//callback handler for form submit
+	$("#id_frm_add_spoils").submit(function(e) {
+	    var postData = $(this).serializeArray();
+	    // console.log(postData);
+	    $("#btnSave").button("loading")
+	    var formURL = $(this).attr("action");
+		var do_what = $("#id_do_what").val();
+		//alert("add submit "+do_what)
+		//将do_what置成添加
+		$("#id_do_what").val("add");
+		$.ajax({
+	      url: formURL,
+	      type: "POST",
+	      data: postData,
+		  dataType: "json",
+	      success: function(data, textStatus, jqXHR) {
+	        //data: return data from server
+	        $('#id_spoils_modal').modal('hide');
+	        $("#id_btn_save_spoils").button("reset");
+	        //location.reload(true);
+			if (do_what == 'modify') {
+				//alert("in modify set "+ mod_sid);
+				var contribution = $("#id_contribution").val();
+				var pro_skill = $("#id_pro_skill").val();
+				var performance = $("#id_performance").val();
+				$("#id_score_contribution_"+mod_sid).text(contribution);
+				$("#id_score_pro_skill_"+mod_sid).text(pro_skill);
+				$("#id_score_performance_"+mod_sid).text(performance);
+				var reason = $("#id_reason").val();
+				var reason_display = reason;
+				if (reason.length > 8) {
+					reason_display = reason.substring(0,8);
+				}
+				$("#id_score_reason_"+mod_sid).html('<a href="javascript: void();" title="'+reason+'">'+reason_display+'</a>');
+				scores[mod_sid]["contribution"] = contribution;
+				scores[mod_sid]["pro_skill"] = pro_skill;
+				scores[mod_sid]["performance"] = performance;
+				scores[mod_sid]["reason"] = reason;
+				//alert("in modify set over");
+			}
+			else if (do_what == 'add'){
+				var pid = $("#id_add_pid").val();
+				var pname = $("#id_add_pid").find("option:selected").text();
+				var staff_id = $("#id_uid").val();
+				var staff_name = $("#id_uid").find("option:selected").text();
+				var month = $("#id_spoils_month").val();
+				var contribution = $("#id_contribution").val();
+				var pro_skill = $("#id_pro_skill").val();
+				var performance = $("#id_performance").val();
+				var reason = $("#id_reason").val();
+				//var data = JSON.parse(ret);
+				scores[data["id"]] = {//"year": month.substring(0,4),
+										//"month": month.substring(5,7),
+										"staff": [staff_id, staff_name],
+										"program": [pid, pname],
+										//"group": "{{ scoreinfo.staff.group.name }}",
+										"contribution": contribution,
+										"pro_skill": pro_skill,
+										"performance": performance,
+										"reason": reason
+										};
+				
+				//在表格中添加行
+				//var table_obj = $("#id_score_table");
+				var table_obj = document.getElementById("id_score_table");
+				//alert(table_obj);
+				//添加行
+				var newTR = table_obj.insertRow(table_obj.rows.length);
+				newTR.id = 'id_score_tr_'+data['id'];
+				//操作字段所在索引
+				var lastTdIndex = 0;
+				
+				//年份
+				var newYearTD = newTR.insertCell(lastTdIndex++);
+				//添加列内容
+				newYearTD.innerHTML = month.substring(0,4)+'年';
+				
+				//月份
+				var newMonthTD = newTR.insertCell(lastTdIndex++);
+				//添加列内容
+				newMonthTD.innerHTML = month.substring(5,7)+'月';
+				
+				//人员
+				var newStaffTD = newTR.insertCell(lastTdIndex++);
+				//添加列内容
+				newStaffTD.innerHTML = staff_name;
+				
+				//项目
+				var newProgramTD = newTR.insertCell(lastTdIndex++);
+				//添加列内容
+				newProgramTD.innerHTML = pname;
+				
+				//组
+				var newGroupTD = newTR.insertCell(lastTdIndex++);
+				//添加列内容
+				newGroupTD.innerHTML = data["group"];
+				
+				//贡献分
+				var newContributionTD = newTR.insertCell(lastTdIndex++);
+				newContributionTD.id = "id_score_contribution_"+data['id'];
+				//添加列内容
+				newContributionTD.innerHTML = contribution;
+				
+				//专业技能分
+				var newProSkillTD = newTR.insertCell(lastTdIndex++);
+				newProSkillTD.id = "id_score_pro_skill_"+data['id'];
+				//添加列内容
+				newProSkillTD.innerHTML = pro_skill;
+				
+				//表现加分
+				var newPerformenceTD = newTR.insertCell(lastTdIndex++);
+				newPerformenceTD.id = "id_score_performance_"+data['id'];
+				//添加列内容
+				newPerformenceTD.innerHTML = performance;
+				
+				//打分理由
+				var newReasonTD = newTR.insertCell(lastTdIndex++);
+				newReasonTD.id = "id_score_reason_"+data['id'];
+				//添加列内容
+				var reason_display = reason;
+				if (reason.length > 8) {
+					reason_display = reason.substring(0,8);
+				}
+				newReasonTD.innerHTML = '<a href="javascript: void();" title="'+reason+'">'+reason_display+'</a>';
+				
+				//附加操作
+				var newOtherTD = newTR.insertCell(lastTdIndex++);
+				//添加列内容
+				var html = '<a href="javascript: void();" onclick="javascript: modify_score(sid=\''+data['id']+'\', pid=\''+pid+'\', uid=\''+staff_id+'\', month=\''+month+'\'); return false;">修改</a>'
+	    		html += '<a href="javascript: void();" onclick="javascript: del_score(pid=\''+data['id']+'\', pid=\''+pid+'\', uid=\''+staff_id+'\', month=\''+month+'\'); return false;">删除</a>'
+				newOtherTD.innerHTML = html;
+			}
+			alert('添加成功');
+	      },
+	      error: function(jqXHR, textStatus, errorThrown) {
+	        alert("添加失败");
+	      }
+	    });
+	    e.preventDefault(); //STOP default action
+	    e.unbind(); //unbind. to stop multiple form submit.
+	});
+	//增加项目同伙
+	$("#id_save_spoils").click(function(e) {
+	  	//alert("in click event");
+	    $("#id_frm_add_spoils").submit();
+	});
+	
+	
+	//修改项目同伙
+	function modify_score(sid, pid, uid, month) {
+		$('#id_spoils_modal').modal('show');
+		var score = scores[sid];
+		$("#id_add_pid").val(score["program"][0]);
+		$("#id_uid").val(score["staff"][0]);
+		$("#id_contribution").val(score["contribution"]);
+		$("#id_pro_skill").val(score["pro_skill"]);
+		$("#id_performance").val(score["performance"]);
+		$("#id_reason").val(score["reason"]);
+		$("#id_do_what").val("modify");
+		mod_sid = sid;
+	}
+	
+	//获取对象
+	function findObj(theObj, theDoc)
+	{ 
+		var p, i, foundObj; 
+		if(!theDoc)
+			theDoc = document; 
+		if((p = theObj.indexOf("?")) > 0 && parent.frames.length) {   
+			theDoc = parent.frames[theObj.substring(p+1)].document;
+			theObj = theObj.substring(0,p);
+		}
+		if(!(foundObj = theDoc[theObj]) && theDoc.all)
+			foundObj = theDoc.all[theObj];
+		for (i=0; !foundObj && i < theDoc.forms.length; i++)
+			foundObj = theDoc.forms[i][theObj];
+		for(i=0; !foundObj && theDoc.layers && i < theDoc.layers.length; i++)
+			foundObj = findObj(theObj,theDoc.layers[i].document);
+		if(!foundObj && document.getElementById)
+			foundObj = document.getElementById(theObj);
+		return foundObj;
+	}
+	
+	//获取对象类中成员变量数量，主要是获取字典中键值数
+	function getPropertyCount(o){  
+	   var n, count = 0;  
+	   for(n in o){  
+	      if(o.hasOwnProperty(n)){  
+	         count++;  
+	      }  
+	   }  
+	   return count;  
+	}
+	
+	//删除项目同伙
+	function del_score(sid, pid, uid, month) {
+		if (confirm("确认删除该同伙")) {
+			$.ajax({
+				url: "/bonus/programuserinfo/",
+				type: "POST",
+				data: {"pid": pid, "uid": uid, "month": month.substring(0,7), "do_what": 'del'},
+				success: function(data, textStatus, jqXHR) {
+					alert("删除成功");
+					//在表格中添加行
+					//var table_obj = $("#id_score_table");
+					var table_obj = document.getElementById("id_score_table");
+					//var table_obj = findObj("id_score_table", document);
+					//var tr_obj = findObj("id_score_table", document);
+					table_obj.deleteRow(document.getElementById("id_score_tr_"+sid).rowIndex);
+					//delete scores[sid];
+					//alert(scores.length);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("删除失败");
+				}
+			});
+		}
+	}
+	
+	//复制上月项目同伙
+	$("#id_copy_spoils_submit").click(function(e) {
+		var pid = $("#id_view_pid").val();
+		var month = $("#id_view_month").val();
+		if (confirm("确定创建【"+month+"】的同伙数据")) {
+			$.ajax({
+				url: "/bonus/programuserinfo/",
+				type: "POST",
+				data: {"pid": pid, "month": month, "do_what": 'copy'},
+				success: function(data, textStatus, jqXHR) {
+					alert("复制成功");
+					window.location.replace("/bonus/programuserinfo/?pid="+pid+"&month="+month);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("删除失败");
+				}
+			});
+		}
+	});
+	
+	/*
+	//数据表处理
+	//数据表参数
+	var tb_params = {"language": {
+				      	"url": "/media/DataTables-1.10.6/media/loc/Chinese.json"
+				      }, 
+					  "paging": false
+				    };
+    //固定表头参数
+    var fh_params = {"left": true};
+    var table = $('#id_score_table').DataTable(tb_params);
+    new $.fn.dataTable.FixedHeader(table, fh_params);
+    */
+</script>

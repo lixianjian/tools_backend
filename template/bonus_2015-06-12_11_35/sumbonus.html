@@ -1,0 +1,113 @@
+<div class="data_title">
+	<p>
+		欢迎[&nbsp;<span style="color:#390;"><b>{{ user.last_name }}{{ user.first_name }}</b></span>&nbsp;]登陆&nbsp;&nbsp;&nbsp;&nbsp;
+		<a href="/bonus/alter_password/">修改密码</a>&nbsp;&nbsp;
+		<a href="/bonus/quity/">注销</a>&nbsp;&nbsp;
+	</p>
+</div>
+
+<div id="form_table">
+	<p>
+	    <fieldset>
+	    	{% if modify %}
+	    		<legend style="font:'宋体'; color:#8000FF">查看/修改概述</legend>
+	    	{% else %}
+				<legend style="font:'宋体'; color:#8000FF">添加月奖金</legend>
+			{% endif %}
+			<form action="/bonus/sumbonus/?do_what=add" method="post">{%csrf_token%}
+				<table style="border:1px solid #000;" class="regist_table">
+			    	<tr>
+			    		<td class="right_td">月份：</td>
+			    		<td class="left_td">
+			    			<!-- <input class="Wdate" type="text" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})" id="idstartday" name="startday" style="width:250px;" value="" /> -->
+			    			{% if modify %}
+			    				<input name="modify" type="hidden" value="true" />
+			    				<input name="month" style="width:150px;" value="{{ month }}" maxlength="7" type="text" readonly="readonly" />
+			    			{% else %}
+			    				<input class="Wdate" name="month" onClick="WdatePicker({dateFmt:'yyyy-MM'})" style="width:150px;" value="{{ month }}" maxlength="7" type="text" />
+			    			{% endif %}
+			    			(示例：2012-09)
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td class="right_td">项目：</td>
+			    		<td class="left_td">
+			    			{% if modify %}
+				    			<select id="id_pid" name="pid" class="s_name" style="width:150px;height:25px;" readonly="readonly">
+				    				<option value="{{ pid }}"  selected="selected">{{ bonusinfo.programinfo.name }}</option>
+				    			</select>
+				    		{% else %}
+				    			<select id="id_pid" name="pid" style="width:150px;height:20px;">
+				            	{% for pinfo in pinfos %}
+								 	<option value="{{ pinfo.id }}">{{ pinfo.name }}</option>
+				            	{% endfor %}
+				            {% endif %}
+			            	</select>
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td class="right_td">金额：</td>
+			    		<td class="left_td">
+			    			<input name="count" style="width:150px;" value="{{ bonusinfo.count }}" maxlength="10" type="text" />
+			    			(示例：2012,2012.00)
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td class="right_td">确认金额：</td>
+			    		<td class="left_td">
+			    			<input name="surecount" style="width:150px;" value="{{ bonusinfo.count }}" maxlength="10" type="text" />
+			    			(示例：2012,2012.00)
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td class="right_td">概述 ：</td>
+			    		<td class="left_td">
+			    			<textarea id="id_reason" name="reason" style="width:500px;height:200px;">{{ bonusinfo.reason }}</textarea>
+			    			<span style="color:#F00;">*</span>
+			            </select>
+			    		</td>
+			    	</tr>
+			    	<tr>
+			    		<td class="right_td"><input type='submit' value='提交' class="btn" /></td>
+			    		<td class="left_td">
+			    			{% if tips %}
+								<span style="color:#F00;">{{ tips }}</span>
+							{% endif %}
+			    		</td>
+			    	</tr>
+				</table>
+		    </form>
+		</fieldset>
+	</p>
+	<p>		
+		<fieldset style="margin-left:0px;">
+			<legend style="font:'宋体'; color:#8000FF">月奖金总额</legend>
+			<a href="/bonus/sumbonus/?isadd=true">
+				<input type='button' value='添加月奖金' style="font-weight:bold;font-size:16px;padding:2px 5px 2px 5px;margin-top:10px;margin-bottom:10px;" /></td>
+			</a>
+			<table class="data">
+				<tr>
+				{% for field in title %}
+					<th>{{ field }}</th>
+				{% endfor %}
+				</tr>
+				{% for data in datas %}
+					<tr>
+		    			<!-- 年份 -->
+		    			<td>{{ data.month.year }}年</td>
+		    			<!-- 月份 -->
+		    			<td>{{ data.month.month }}月</td>
+		    			<!-- 项目 -->
+		    			<td>{{ data.programinfo.name }}</td>
+		    			<!-- 贡献分 -->
+		    			<td>{{ data.count }}</td>
+		    			<!-- 人员 -->
+		    			<td>{{ data.userinfo.last_name }}{{ data.userinfo.first_name }}</td>
+		    			<!-- 概述 -->
+		    			<td><a href="/bonus/sumbonus/?do_what=modify&pid={{ data.programinfo.id }}&month={{ data.month|safe }}">查看</a></td>
+					</tr>
+				{% endfor %}
+			</table>
+		</fieldset>
+	</p>
+</div>

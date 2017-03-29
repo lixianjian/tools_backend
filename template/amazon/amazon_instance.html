@@ -1,0 +1,266 @@
+<div class="panel panel-default">
+<!-- Default panel contents -->
+{% if do_what == 'get' %}
+	<div class="panel-heading">
+		{%include 'amazon/table_nav.html' %}
+	</div>
+	
+	
+	<div class="table-responsive">
+		<table class="table table-bordered">
+        	<thead>
+				<tr>
+					<th>编辑</th>
+					<th>ID</th>
+					<th>游戏平台</th>
+					<th>所属组</th>
+					<th>外网域名</th>
+					<th>内网域名</th>
+					<th>状态</th>
+					<th>状态码</th>
+					<th>前状态</th>
+					<th>前状态码</th>
+					<th>ssh密钥</th>
+					<th>类型</th>
+					<th>购买时间</th>
+					<th>镜像ID</th>
+					<th>区域</th>
+					<th>内网IP地址</th>
+					<th>外网IP地址</th>
+					<th>操作系统</th>
+					<th>操作人</th>
+					<th>操作时间</th>
+					<th>删除</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for data in datas %}
+					<tr>
+						<!-- 编辑 -->
+						<td>
+					    	<a href="/{{ app }}/{{ view_func.name }}/modify/?recordid={{ data.id }}&page={{ datas.number }}">编辑</a>
+					    </td>
+						<!-- ID -->
+					    <td>{{ data.id }}</td>
+					    <!-- 游戏平台 -->
+					    <td>{{ data.gpf.name }}</td>
+					    <!-- 所属组 -->
+					    <td>{{ data.group_name }}</td>
+					    <!-- 外网域名 -->
+					    <td>{{ data.public_dns_name }}</td>
+					    <!-- 内网域名 -->
+					    <td>{{ data.private_dns_name }}</td>
+					    <!-- 状态 -->
+					    <td>{{ data.state }}</td>
+					    <!-- 状态码 -->
+					    <td>{{ data.state_code }}</td>
+					    <!-- 前状态 -->
+					    <td>{{ data.previous_state }}</td>
+					    <!-- 前状态码 -->
+					    <td>{{ data.previous_state_code }}</td>
+					    <!-- ssh密钥 -->
+					    <td>{{ data.key_name }}</td>
+					    <!-- 类型 -->
+					    <td>{{ data.instance_type }}</td>
+					    <!-- 购买时间 -->
+					    <td>{{ data.launch_time }}</td>
+					    <!-- 镜像ID -->
+					    <td>{{ data.image_id }}</td>
+					    <!-- 区域 -->
+					    <td>{{ data.placement }}</td>
+					    <!-- 内网IP地址 -->
+					    <td>{{ data.private_ip_address }}</td>
+					    <!-- 外网IP地址 -->
+					    <td>{{ data.ip_address }}</td>
+					    <!-- 操作系统 -->
+					    <td>{{ data.platform }}</td>
+					    <!-- 操作人 -->
+					    <td>{{ data.operator.last_name }}{{ data.operator.first_name }}</td>
+					    <!-- 操作时间 -->
+					    <td>{{ data.create|date:"Y-m-d H:i:s" }}</td>
+					    <!-- 其他操作 -->
+					    <td>
+					    	{% if perms.auth.not_delete %}
+					    	{% else %}
+					    		<a href="/{{ app }}/{{ view_func.name }}/delete/?recordid={{ data.primary_id }}&page={{ datas.number }}">删除</a>
+					    	{% endif %}
+					    	<!-- <a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.markid }}/?do_what=preview&recordid={{ data.primary_id }}">预览</a> -->
+					    </td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% else %}
+	<script>
+		var fields = [['id','ID'], ['gpf','游戏平台'], ['public_dns_name','外网域名'], ['launch_time','购买时间']];
+		function check_params() {
+			//alert("in check_params");
+			for (var i=0; i < fields.length; i++) {
+				//fobj = $("#id"+fields[i][0]);
+				//alert(fields[i][0]);
+				//alert($("#id_"+fields[i][0]).val());
+				var value = $("#id_"+fields[i][0]).val();
+				if (value == "0" | value == "" | value == null) {
+					alert(fields[i][1]+"为空，请先填写");
+					return false;
+				}
+			}
+			return true;
+		}
+	</script>
+	<div class="panel-heading">
+		{% if do_what == 'add' %}
+			添加
+		{% else %}
+			修改
+		{% endif %}
+		{{ view_func.intro }}
+	</div>
+	<form class="form-horizontal" role="form" action="{{ form_action }}" method="post" style="margin-top:5px;">{%csrf_token%}
+		<div class="form-group">
+          <label for="id" class="col-sm-2 control-label">服务器实例ID:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_id" name="id" value="{{ datas.id|default:'' }}" />
+            <!-- &nbsp;&nbsp;<span class="label label-warning">*必填</span> -->
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="gpf" class="col-sm-2 control-label">游戏平台:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_gpf" name="gpf">
+              <option value='1'>请选择游戏平台</option>
+				{% for gpf in gpfs %}
+					{% if gpf.id == datas.gpf.id %}
+						<option value='{{ gpf.id }}' selected='selected'>{{ gpf.name }}</option>
+					{% else %}
+			        	<option value='{{ gpf.id }}'>{{ gpf.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+		<div class="form-group">
+          <label for="group_name" class="col-sm-2 control-label">所属组:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_group_name" name="group_name" value="{{ datas.group_name|default:'game' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="public_dns_name" class="col-sm-2 control-label">外网域名:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_public_dns_name" name="public_dns_name" value="{{ datas.public_dns_name|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="private_dns_name" class="col-sm-2 control-label">内网域名:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_private_dns_name" name="private_dns_name" value="{{ datas.private_dns_name|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="state" class="col-sm-2 control-label">状态:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_state" name="state" value="{{ datas.state|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="state_code" class="col-sm-2 control-label">状态码:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_state_code" name="state_code" value="{{ datas.state_code|default:'0' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="previous_state" class="col-sm-2 control-label">前状态:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_previous_state" name="previous_state" value="{{ datas.previous_state|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="previous_state_code" class="col-sm-2 control-label">前状态码:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_previous_state_code" name="previous_state_code" value="{{ datas.previous_state_code|default:'0' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="key_name" class="col-sm-2 control-label">ssh密钥:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_key_name" name="key_name" value="{{ datas.key_name|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="instance_type" class="col-sm-2 control-label">类型:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_instance_type" name="instance_type" value="{{ datas.instance_type|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="launch_time" class="col-sm-2 control-label">购买时间:</label>
+          <div class="col-sm-3">
+            <div class="input-group">
+	            <!-- <input class="form-control" id="id_launch_time" name="launch_time" value="{{ datas.launch_time|default:'' }}" /> -->
+	            <input class="form-control" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="id_launch_time" name="launch_time" value="{{ datas.opentime|date:'Y-m-d H:i:s'|default:'' }}" />
+			    <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+			</div>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="image_id" class="col-sm-2 control-label">镜像ID:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_image_id" name="image_id" value="{{ datas.image_id|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="placement" class="col-sm-2 control-label">区域:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_placement" name="placement" value="{{ datas.placement|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="private_ip_address" class="col-sm-2 control-label">内网IP地址:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_private_ip_address" name="private_ip_address" value="{{ datas.private_ip_address|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="ip_address" class="col-sm-2 control-label">外网IP地址:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_ip_address" name="ip_address" value="{{ datas.ip_address|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="platform" class="col-sm-2 control-label">操作系统:</label>
+          <div class="col-sm-3">
+            <input class="form-control" id="id_platform" name="platform" value="{{ datas.platform|default:'UNIX/LINUX' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="submit" class="col-sm-2 control-label">
+          	<button type="submit" class="btn btn-default" name="submit" onclick="javascript:return check_params();">提交</button>
+          </label>
+          <div class="col-sm-10">
+	          {% if tips %}
+			  	<span style="color:#F00;">{{ tips }}</span>
+			  {% endif %}
+		  </div>
+        </div>
+    </form>
+{% endif %}
+</div>

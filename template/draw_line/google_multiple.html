@@ -1,0 +1,49 @@
+ <html>
+  <head>
+    <script type="text/javascript" src="../../media/google_chart/jsapi.js"></script>
+    <script type="text/javascript">
+       
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+     var data = new google.visualization.DataTable(
+	   {
+	     cols: [{id: 'task', label: 'Employee Name', type: 'number'},
+	            {id: 'startDate', label: 'Start Date', type: 'number'},
+	            {id: 'startDate2', label: 'Start Date2', type: 'number'}],
+	     rows: [{'c':[{'v': 0}, {'v': 0}, {'v': 1}]},
+	            {c:[{v: 1},{v: 10},{}]},
+	            {c:[{v: 2}, {v: 23},{v: 15}]},
+	            {c:[{v: 3}, {v: 17},{v: 9}]},
+	            {c:[{v: 4}, {v: 18},{}]},
+	            {c:[{v: 5}, {v: 9},{}]}
+	           ]
+	   }
+	);
+
+
+      var options = {
+        width: 1000,
+        height: 563,
+        hAxis: {
+          title: 'Time'
+        },
+        vAxis: {
+          title: 'Popularity'
+        },
+        series: {
+          1: {curveType: 'function'}
+        }
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('ex2'));
+
+      chart.draw(data, options);
+    }
+    </script>
+  </head>
+  <body>
+    <div id="ex2"></div>
+  </body>
+</html>

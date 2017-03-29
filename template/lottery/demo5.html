@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//Dtd XHTML 1.0 Transitional//EN" "http://www.w3.org/tr/xhtml1/Dtd/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>无缝滚动demo5</title>
+<style type="text/css">
+/***************新增样式ʽ******************/
+.yaojiang_beijing{width:800px; height:124px; background-image: url(2.gif); margin:0 auto;background-repeat: repeat-x;display:block;} 
+.yaojiang_bianliang{width:690px; height:70px; float:left; padding:28px 0 0 33px;margin:0;display:block;} 
+.yaojiang_bianliang img{width:47px; height:65px; float:left; padding:0 0 0 2px;margin:0;display:block; border:1px solid #000;}  
+.yaojiang_anniu{width:38px; height:38px; float:left; padding:40px 0 0 20px;margin:0;display:block; } 
+</style>
+
+<script LANGUAGE="JavaScript">
+//滚动速度
+var speed=10;
+//是否闪烁
+var shang=0;
+//定时器数组
+var interval_obj;
+//闪烁定时器
+var fla_inter_obj;
+//号码数量(长度)
+var num_len = 4;
+//中奖号码
+var number;
+//img对象数组
+var img_objs = [];
+//摇号数组
+var numbers = ['4696','8769','6758','4877'];
+//初始化img数组
+function set_img_objs(){
+	for (var i = 1; i < num_len + 1; i++){
+		//var _id = "img_"+i;
+		//alert(_id);
+		//var obj1 = document.getElementById(_id);
+		//alert(obj1);
+		img_objs.push(document.getElementById("img_"+i));
+	}
+}
+
+//获取随机值
+function GetRnd(min,max){
+	var offset = arguments[2] ? arguments[2] : 0;
+	return parseInt(Math.random()*(max-min+1)+offset);
+}
+
+//给img赋值
+function set_img(){
+	//alert(number);
+	for (var i = 0; i < number.length; i++){
+		//img_objs[i].src = GetRnd(4, 37, 4) + ".gif";
+		img_objs[i].src = number[i] + ".gif";
+	}
+}
+
+//获取获奖号码
+function set_number(){
+	number = numbers[GetRnd(0,numbers.length-1)];
+	//alert(number);
+}
+
+//摇号
+function Marquee() {
+	set_number();
+	set_img();
+}
+
+function flashLogo() {
+	var deng = document.getElementById("shanshuo");
+	if(shang == 0) {
+		deng.src = "17.gif";
+		shang = 1;
+	} else {
+		deng.src = "16.gif";
+		shang = 0;
+	}
+}
+
+function start() {
+	document.getElementById("startButton").href="javascript:void(null);";
+	set_img_objs();
+	Marquee();
+	interval_obj = setInterval(Marquee,speed);
+	fla_inter_obj = setInterval(flashLogo, 100);	
+	setTimeout("stop()", 3000);
+}
+
+function stop() {
+	document.getElementById("startButton").href="javascript:start();";
+	clearInterval(interval_obj);
+	Marquee();
+	clearInterval(fla_inter_obj);
+	document.getElementById("shanshuo").src = "17.gif";
+}
+</script>
+
+</head>
+<body>
+<div class="dxq_jingpaiming_1">
+	<div class="yaojiang_beijing">
+		<div class="yaojiang_bianliang">
+			<img id="img_1" src="39.gif"/>
+			<img id="img_2" src="39.gif"/>
+			<img id="img_3" src="39.gif"/>
+			<img id="img_4" src="39.gif"/>
+		</div>
+		<div class="yaojiang_anniu">
+			<img id="shanshuo" src="16.gif" border="0"/>
+		</div>
+	</div>
+</div>
+
+<div class="dxq_paiming_hang" style="text-align:center;">
+	<a id="startButton" href="javascript:start();"><img src="1.gif" border="0"/></a>
+</div>
+</body>
+</html>

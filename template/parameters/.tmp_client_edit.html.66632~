@@ -1,0 +1,255 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>客户端编辑器</title>
+<link href="/media/CSS/screen.css" rel="stylesheet" type="text/css" /><!--  -->
+<script language="javascript" type="text/javascript" src="/media/JS/jquery-1.7.1.min.js"></script>
+<script src="/media/JS/swfobject.js"></script>
+<script LANGUAGE="JavaScript">
+// Example: obj = findObj("image1");
+function findObj(theObj, theDoc)
+{ 
+	var p, i, foundObj; 
+	if(!theDoc)
+		theDoc = document; 
+	if((p = theObj.indexOf("?")) > 0 && parent.frames.length) {   
+		theDoc = parent.frames[theObj.substring(p+1)].document;
+		theObj = theObj.substring(0,p);
+	}
+	if(!(foundObj = theDoc[theObj]) && theDoc.all)
+		foundObj = theDoc.all[theObj];
+	for (i=0; !foundObj && i < theDoc.forms.length; i++)
+		foundObj = theDoc.forms[i][theObj];
+	for(i=0; !foundObj && theDoc.layers && i < theDoc.layers.length; i++)
+		foundObj = findObj(theObj,theDoc.layers[i].document);
+	if(!foundObj && document.getElementById)
+		foundObj = document.getElementById(theObj);
+	return foundObj;
+}
+
+var version="10.0";
+var attributes={"quality":"high","wmode":"opaque", "allowScriptAccess":"always", "id":"dhh", "name":"dhh"};
+function getSwf(movieName)
+{
+	if (window.document[movieName])
+	{
+		return window.document[movieName];
+	}
+	if (navigator.appName.indexOf("Microsoft") == -1)
+	{
+		if (document.embeds && document.embeds[movieName])
+		{
+			return document.embeds[movieName];
+		}
+	}
+	else
+	{
+		return document.getElementById(movieName);
+	}
+}
+
+var flashvars = {
+					"data_url": "http://220.dhh.darkhutgame.net:8080/artres/cgame/loc"
+					//"foreigns": foreigns
+				};
+/*
+function fkFlash(){
+	var height = $(document.body).height().toString();
+	alert(height);
+	var width = $(document.body).width().toString();
+	swfobject.embedSWF("{{ full_screen_swf_name }}","swf",width,height,'10.0',"expressInstall.swf",flashvars,{"allowFullScreenInteractive":"true"});
+}
+window.onload = fkFlash;
+*/
+function fkFlash(height){
+	var height = ($(document.body).height()-3).toString();
+	var width = '100%';
+	swfobject.embedSWF("{{ full_screen_swf_name }}","swf",width,height,'10.0',"expressInstall.swf",flashvars,{"allowFullScreenInteractive":"true"});
+}
+
+//加载页面时执行
+$(document).ready(function(){
+	setMainSwfHeight();	
+	
+	$(window).resize(function() {
+		setMainSwfHeight();
+	});
+	
+	function setMainSwfHeight(){
+		var height = ($(document.body).height()-3).toString();
+		var width = '100%';
+		$("#swf").height( height );
+		$("#swf").width( width );
+	}
+});
+
+window.onload = fkFlash;
+
+
+var action = 'get';
+
+//获取
+function get_record(data){
+	//var table = arguments[0] ? arguments[0] : '';
+  	//var id = arguments[1] ? arguments[1] : 0;
+	var table = data['table'];
+	var id = data['id'];
+	action = 'get';
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=get&reqmode=js&recordid='+id.toString(),
+		type:'get',
+		dataType:'json',
+		data:'',
+		success:record_callback
+	});
+}
+
+//添加
+function add_record(data){
+	//alert(data);
+	var table = data['table'];
+	action = 'add';
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=add&reqmode=js',
+		type:'post',
+		dataType:'json',
+		data:data,
+		success:record_callback
+	});
+}
+
+//修改
+function update_record(data){
+	//alert(data);
+	action = 'update';
+	var table = data['table'];
+	var id = data['id'];
+	//var id = data["id"].toString();
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=modify&recordid='+id.toString()+'&reqmode=js',
+		type:'post',
+		dataType:'json',
+		data:data,
+		success:record_callback
+	});
+}
+
+//删除
+function delete_record(data){
+	action = 'delete';
+	var table = data['table'];
+	var id = data['id'];
+	$.ajax({
+		url: '/parameters/{{ program.markid }}/{{ locale.markid }}/'+table+'/?do_what=delete&recordid='+id.toString()+'&reqmode=js',
+		type:'get',
+		dataType:'json',
+		data:{},
+		success:record_callback
+	});
+}
+
+//接受返回
+function record_callback(datas)
+{	
+	alert(action);
+	var flash = document.getElementById("swf");
+	var ret; 
+	if (datas == null){
+		//alert("fail, return message is none");
+		if (action == 'get'){
+			//return [];
+			ret = [];
+		}
+		else{
+			//return false;
+			ret = false;
+		}
+	}
+	else if (datas["tips"] != "") {
+		//alert("tips"+datas["tips"]);
+		if (action == 'get'){
+			alert(tips);
+			//return [];
+			ret = [];
+		}
+		else{
+			//return false;
+			ret = false;
+		}
+	}
+	else {
+		//alert("success");
+		if (action == 'get'){
+			//alert(datas['datas'][0]['id']);
+			//return datas['datas'];
+			ret = datas['datas'];
+		}
+		else{
+			//return true;
+			ret = true;
+		}
+	}
+	if (action == 'get'){
+		flash.get_record(ret);
+	}
+	else if (action == 'add'){
+		flash.add_record(ret);
+	}
+	else if (action == 'add'){
+		flash.update_record(ret);
+	}
+	else if (action == 'add'){
+		flash.delete_record(ret);
+	}
+	else {
+		alert('未知调用方法');
+	}
+}
+
+//接受返回
+function visitcallback(datas)
+{	
+	//alert(datas);
+	return datas;
+}
+
+function test_func(){
+	//获取数据
+	get_record('errorcode',15);
+	//增加记录
+	//add_record('errorcode',{'sn': 16, 'info': 'test2', 'error_id': 1002});
+	//修改记录
+	//update_record('errorcode',15,{'sn': 14, 'info': 'test3', 'error_id': 1003});
+	//删除记录
+	//delete_record('errorcode',1);
+	var flash = document.getElementById("swf");
+	flash.test_func(true);
+}
+/*
+function test_func(data){
+	//获取数据
+	//get_record('errorcode',15);
+	//增加记录
+	//add_record('errorcode',{'sn': 16, 'info': 'test2', 'error_id': 1002});
+	//修改记录
+	//update_record('errorcode',15,{'sn': 14, 'info': 'test3', 'error_id': 1003});
+	//删除记录
+	//delete_record('errorcode',1);
+	alert(data);
+	var flash = document.getElementById("swf");
+	flash.test_func(true);
+}
+*/
+</script>
+<title>参数表后台</title>
+</head>
+<body>
+	<!-- 测试JS增删改表记录 -->
+	<!-- <p><a href="javascript:void();" onclick="javascript:test_func();">测试</a></p> -->
+	<!-- swf -->
+	<div id="swf" onclick="javascript:">
+		<!-- <EMBED src="{{ full_screen_swf_name }}" width='1130' height='930' wmode='transparent' menu='false' quality='high' type='application/x-shockwave-flash'></EMBED> -->
+	</div>
+</body>
+</html>

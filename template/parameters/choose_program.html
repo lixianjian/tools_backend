@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>选择项目</title>
+<link href="/media/CSS/global.css" rel="stylesheet" type="text/css" />
+<script language="javascript" type="text/javascript" src="/media/JS/jquery-1.7.1.min.js"></script>
+<script language="javascript" type="text/javascript" src="/media/JS/js_libs.js"></script>
+<script>
+var programlocales = new Object();
+{% for program in programs %}
+	var pid = "{{program.program.markid }}";
+	var keyexists = programlocales.hasOwnProperty(pid);
+	if (!keyexists){
+		programlocales[pid] = [];	
+	}
+	var tmp = {"programid":pid,"languageid":"{{ program.locale.markid }}","name":"{{ program.locale.name }}",};
+	programlocales[pid].push(tmp);
+{% endfor %}
+//联动函数 
+function gl_redirect()
+{ 
+	var x = $("#id_programid").val();
+	document.gl_frm.localeid.options.length = 0;
+	var temp = document.gl_frm.localeid;
+	selected_locale_index = 0;
+	for (i=0;i<programlocales[x].length;i++)
+	{
+		temp.options[i]=new Option(programlocales[x][i]['name'],programlocales[x][i]['languageid']);
+		if ("{{ localeid }}" == programlocales[x][i]['languageid'])
+		{
+			selected_locale_index = i;
+		}
+		//alert(programlocales[x][i]['name']);
+	} 
+	temp.options[selected_locale_index].selected=true;
+}
+window.onload = gl_redirect;
+</script>
+</head>
+
+<body>
+<div id="container">
+	<!-- header -->
+	{% include 'header.html' %}
+	
+	<!-- content -->
+	<div id="middle">
+		<div style="height:500px;width:960px;">
+			{% if tips %}
+				{{ tips }}
+			{% else %}
+				<form name="gl_frm" action="/{{ form_action }}/" method="post" id="form_table">{%csrf_token%}
+					<table style="border:1px solid #000;" class="regist_table">
+				    	<tr>
+				    		<td class="right_td">项目：</td>
+				    		<td class="left_td">
+								<select id="id_programid" name="programid" onChange="gl_redirect()" style="width:150px;height:25px;">
+					            	{% for program in programs %}
+									 	<option value="{{ program.program.markid }}">{{ program.program.name }}</option>
+					                {% endfor %}
+					            </select>
+				    		</td>
+				    	</tr>
+				    	<tr>
+				    		<td class="right_td">语言：</td>
+				    		<td class="left_td">
+								<select name="localeid" style="width:150px;height:25px;">
+					            	<option value="">请选择项目</option>
+					            </select>
+				    		</td>
+				    	</tr>
+				    	<tr>
+				    		<td class="right_td"><input type='submit' value='提交' class="btn" /></td>
+				    		<td class="left_td">
+				    			{% if tips %}
+									<span style="color:#F00;">{{ tips }}</span>
+								{% endif %}
+				    		</td>
+				    	</tr>
+					</table>
+			    </form>
+		    {% endif %}
+		</div>
+		
+	</div>
+	
+	<!-- bottom -->
+	{%include 'bottom.html'%}
+  
+</div>
+
+</body>
+</html>

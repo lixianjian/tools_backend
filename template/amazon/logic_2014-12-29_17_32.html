@@ -1,0 +1,318 @@
+<div class="panel panel-default">
+<!-- Default panel contents -->
+{% if do_what == 'get' %}
+	<div class="panel-heading">
+		{%include 'amazon/table_nav.html' %}
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-bordered">
+        	<thead>
+			<tr>
+				<th>编辑</th>
+				<th>项目</th>
+				<th>国家</th>
+				<th>语言</th>
+				<th>合作方</th>
+				<th>使用时长</th>
+				<th>价格</th>
+				<th>单号</th>
+				<th>服务器名</th>
+				<th>开服时间</th>
+				<th>域名</th>
+				<th>状态</th>
+				<th>申请时间</th>
+				<th>删除</th>
+			</tr>
+			</thead>
+			<tbody>
+			{% for data in datas %}
+				<tr>
+					<!-- 编辑 -->
+					<td>
+				    	<a href="/{{ app }}/{{ view_func.name }}/modify/?recordid={{ data.id }}&page={{ datas.number }}">编辑</a>
+				    </td>
+					<!-- 项目 -->
+				    <td>{{ data.program.name }}</td>
+				    <!-- 国家 -->
+				    <td>{{ data.country.name }}</td>
+				    <!-- 语言 -->
+				    <td>{{ data.locale.name }}</td>
+				    <!-- 合作方 -->
+				    <td>{{ data.partner.last_name }}{{ data.partner.first_name }}</td>
+				    <!-- 使用时长 -->
+				    <td>{{ data.duration.name }}</td>
+				    <!-- 价格 -->
+				    <td>{{ data.price|default:"暂未定价" }}</td>
+				    <!-- 单号 -->
+				    <td>{{ data.tid|default:"" }}</td>
+				    <!-- 服务器名 -->
+				    <td>{{ data.name|default:"" }}</td>
+				    <!-- 开服时间 -->
+				    <td>{{ data.opentime|safe }}</td>
+				    <!-- 域名 -->
+				    <td>{{ data.domain|default:"" }}</td>
+				    <!-- 状态 -->
+				    <td>{{ data.status.name|default:"" }}</td>
+				    <!-- 申请时间 -->
+				    <td>{{ data.create|date:"Y-m-d H:i:s" }}</td>
+				    <!-- 其他操作 -->
+				    <td>
+				    	{% if perms.auth.not_delete %}
+				    	{% else %}
+				    		<a href="/{{ app }}/{{ view_func.name }}/delete/?recordid={{ data.primary_id }}&page={{ datas.number }}">删除</a>
+				    	{% endif %}
+				    	<!-- <a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.markid }}/?do_what=preview&recordid={{ data.primary_id }}">预览</a> -->
+				    </td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table>
+	</div>
+{% else %}
+	<div class="panel-heading">
+		{% if do_what == 'add' %}
+			添加
+		{% else %}
+			修改
+		{% endif %}
+		{{ view_func.intro }}
+	</div>
+	<form class="form-horizontal" role="form" action="{{ form_action }}" method="post" style="margin-top:5px;">{%csrf_token%}
+		<!-- 2014-12-29 17:27 修改，但是选择后只显示了国家，感觉不是很好故以JS联动形式替代 -->
+		<!-- 
+		<div class="form-group">
+          <label for="pc" class="col-sm-2 control-label">项目-国家:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_pc" name="pc">
+              <option value='0'>--请选择项目-国家--</option>
+				{% for pc in pcs %}
+					{% if pc.program.id == datas.program.id %}
+						<optgroup label="{{ pc.program.name }}">
+						{% for country in pc.country.all %}
+							{% if country.id == datas.country.id %}
+								<option value='{{ country.id }}' selected='selected'>{{ county.name }}</option>
+							{% else %}
+								<option value='{{ country.id }}'>{{ country.name }}</option>
+							{% endif %}
+						{% endfor %}
+					{% else %}
+			        	<optgroup label="{{ pc.program.name }}">
+						{% for country in pc.country.all %}
+							<option value='{{ country.id }}'>{{ country.name }}</option>
+						{% endfor %}
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+        -->
+        <script>
+var cs_platservers = {};
+{% for k,vs in plat_servers.items %}
+	cs_platservers["{{ k }}"] = [];
+	{% for v in vs %}
+		var tmp = {};
+		{% for key,value in v.items %}
+			tmp["{{ key }}"] = "{{ value }}"; 
+		{% endfor %}
+		cs_platservers["{{ k }}"].push(tmp);
+	{% endfor %}
+{% endfor %}
+//联动函数 
+function cs_redirect() 
+{ 
+	var x = $("#id_platid").val();
+	document.all.sid.options.length = 0;
+	var temp = document.cs_frm.sid;
+	//var len	= temp.options.length;
+	//alert(len);
+	//for (var i = 0; i < len; i++) {
+    //    temp.options.remove(i);
+    //    alert(i);
+    //}
+	//alert(x);
+	//alert(platservers[x]);
+	selected_server_index = 0;
+	for (i=0;i<cs_platservers[x].length;i++)
+	{
+		temp.options[i]=new Option(cs_platservers[x][i]['name'],cs_platservers[x][i]['sid']);
+		if ("{{ serverid }}" == cs_platservers[x][i]['sid'])
+		{
+			selected_server_index = i;
+		}
+		//alert(platservers[x][i]['name']);
+	} 
+	temp.options[selected_server_index].selected=true;
+}
+window.onload = cs_redirect;
+</script>
+		
+        <div class="form-group">
+          <label for="program" class="col-sm-2 control-label">项目:</label>
+          <div class="col-sm-3">
+          	<input id="id_id" name="id" value="{{ datas.id|default:'0' }}" type="hidden" />
+            <select class="form-control" id="id_program" name="program">
+              <option value='0'>请选择项目</option>
+				{% for prog in progs %}
+					{% if prog.id == datas.program.id %}
+						<option value='{{ prog.id }}' selected='selected'>{{ prog.name }}</option>
+					{% else %}
+			        	<option value='{{ prog.id }}'>{{ prog.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="country" class="col-sm-2 control-label">国家:</label>
+          <div class="col-sm-3">
+          	<select class="form-control" id="id_country" name="country">
+              <option value='0'>请选择国家</option>
+				{% for country in countrys %}
+					{% if country.id == datas.country.id %}
+						<option value='{{ country.id }}' selected='selected'>{{ country.name }}</option>
+					{% else %}
+			        	<option value='{{ country.id }}'>{{ country.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="program" class="col-sm-2 control-label">项目:</label>
+          <div class="col-sm-3">
+          	<input id="id_id" name="id" value="{{ datas.id|default:'0' }}" type="hidden" />
+            <select class="form-control" id="id_program" name="program">
+              <option value='0'>请选择项目</option>
+				{% for prog in progs %}
+					{% if prog.id == datas.program.id %}
+						<option value='{{ prog.id }}' selected='selected'>{{ prog.name }}</option>
+					{% else %}
+			        	<option value='{{ prog.id }}'>{{ prog.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="country" class="col-sm-2 control-label">国家:</label>
+          <div class="col-sm-3">
+          	<select class="form-control" id="id_country" name="country">
+              <option value='0'>请选择国家</option>
+				{% for country in countrys %}
+					{% if country.id == datas.country.id %}
+						<option value='{{ country.id }}' selected='selected'>{{ country.name }}</option>
+					{% else %}
+			        	<option value='{{ country.id }}'>{{ country.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="locale" class="col-sm-2 control-label">语言:</label>
+          <div class="col-sm-3">
+          	<select class="form-control" id="id_country" name="country">
+              <option value='0'>请选择语言</option>
+				{% for loc in locales %}
+					{% if loc.id == datas.locale.id %}
+						<option value='{{ loc.id }}' selected='selected'>{{ loc.name }}</option>
+					{% else %}
+			        	<option value='{{ loc.id }}'>{{ loc.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="partner" class="col-sm-2 control-label">合作方:</label>
+          <div class="col-sm-3">
+          	<input class="form-control" id="id_partner" name="partner" style="width:150px;" value="{{ datas.partner.id|default:'0' }}" type="hidden" />
+          	{% if datas.partner %}
+				<input class="form-control" id="id_partner" name="partner" value="{{ datas.partner.id|default:'0' }}" type="hidden" />
+				<input class="form-control" id="id_partner_name" name="partner_name" value="{{ datas.partner.last_name }} {{ datas.partner.first_name }}" readonly="readonly" />
+			{% else %}
+				<input class="form-control" id="id_partner" name="partner" value="{{ user.id }}" type="hidden" />
+				<input class="form-control" id="id_partner_name" name="partner_name" value="{{ user.last_name }} {{ user.first_name }}" readonly="readonly" />
+			{% endif %}
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="duration" class="col-sm-2 control-label">使用时长:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_duration" name="duration">
+              <option value='0'>请选择使用时长</option>
+              {% for duration in durations %}
+					{% if duration.id == datas.duration.id %}
+						<option value='{{ duration.id }}' selected='selected'>{{ duration.name }}</option>
+					{% else %}
+			        	<option value='{{ duration.id }}'>{{ duration.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="display:none;">
+          <label for="name" class="col-sm-2 control-label">合作方&价格&单号&服务器ID&申请时间&域名:</label>
+          <div class="col-sm-3">
+            <input id="id_price" name="price" style="width:150px;" value="{{ datas.price|default:'0' }}" />
+			<input id="id_tid" name="tid" style="width:150px;" value="{{ datas.tid|default:'' }}" type="text" />
+			<input id="id_svrid" name="tid" style="width:150px;" value="{{ datas.tid|default:'' }}" type="text" />
+			<input class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="id_create2" name="create2"  style="width:150px;" value="{{ datas.create2|date:'Y-m-d H:i:s'|default:'' }}" />
+			<input id="id_domain" name="domain" style="width:150px;" value="{{ datas.domain|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="partner" class="col-sm-2 control-label">服务器名:</label>
+          <div class="col-sm-3">
+          	<input class="form-control" id="id_name" name="name" value="{{ datas.name|default:'' }}" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="opentime" class="col-sm-2 control-label">开服时间:</label>
+          <div class="col-sm-3">
+			<div class="input-group">
+		      <input class="form-control" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" id="id_opentime" name="opentime" value="{{ datas.opentime|date:'Y-m-d H:i:s'|default:'' }}" />
+		      <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+		    </div>
+          	
+          </div>
+        </div>
+        <div class="form-group" style="display:none;">
+          <label for="status" class="col-sm-2 control-label">状态:</label>
+          <div class="col-sm-3">
+            <select class="form-control" id="id_status" name="status">
+              <option value='0'>请选择状态</option>
+              {% for status in statuses %}
+					{% if status.id == datas.status.id %}
+						<option value='{{ status.id }}' selected='selected'>{{ status.name }}</option>
+					{% else %}
+			        	<option value='{{ status.id }}'>{{ status.name }}</option>
+			        {% endif %}
+			    {% endfor %}
+            </select>
+          </div>
+        </div>
+        <hr/>
+       <div class="form-group">
+          <label for="surepassword" class="col-sm-2 control-label"><button type="submit" class="btn btn-default">提交</button></label>
+          <div class="col-sm-10">
+	          {% if tips %}
+			  	<span style="color:#F00;">{{ tips }}</span>
+			  {% endif %}
+		  </div>
+        </div>
+	    </form>
+	</div>
+{% endif %}
+</div>

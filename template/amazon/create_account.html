@@ -1,0 +1,55 @@
+<div class="panel panel-default">
+	<div class="panel-heading">
+		{% if do_what == 'add' %}
+			添加
+		{% else %}
+			修改
+		{% endif %}
+		{{ view_func.intro }}
+	</div>
+	<form class="form-horizontal" role="form" action="{{ form_action }}" method="post" style="margin-top:5px;">{%csrf_token%}
+		<div class="form-group">
+          <label for="username" class="col-sm-2 control-label">账号:</label>
+          <div class="col-sm-3">
+          	<input class="form-control" id="id_username" name="username" value="{{ datas.username|default:'' }}" placeholder="以字母开头包含字母数字下划线" />
+          </div>
+        </div>
+        <hr/>
+	    <div class="form-group">
+          <label for="last_name" class="col-sm-2 control-label">姓:</label>
+          <div class="col-sm-3">
+          	<input class="form-control" id="id_last_name" name="last_name" value="{{ datas.last_name|default:'' }}" placeholder="" />
+          </div>
+        </div>
+        <hr/>
+	    <div class="form-group">
+          <label for="first_name" class="col-sm-2 control-label">名:</label>
+          <div class="col-sm-3">
+          	<input class="form-control" id="id_first_name" name="first_name" value="{{ datas.first_name|default:'' }}" placeholder="" />
+          </div>
+        </div>
+        <hr/>
+	    <div class="form-group">
+          <label for="password" class="col-sm-2 control-label">密码:</label>
+          <div class="col-sm-3">
+          	<input class="form-control" id="id_password" name="password" value="{{ datas.password|default:'' }}" type="password" placeholder="以字母开头包含字母数字下划线" />
+          </div>
+        </div>
+        <hr/>
+	    <div class="form-group">
+          <label for="surepassword" class="col-sm-2 control-label">确认密码:</label>
+          <div class="col-sm-3">
+          	<input class="form-control" id="id_surepassword" name="surepassword" value="{{ datas.surepassword|default:'' }}" type="password" placeholder="以字母开头包含字母数字下划线" />
+          </div>
+        </div>
+        <hr/>
+        <div class="form-group">
+          <label for="surepassword" class="col-sm-2 control-label"><button type="submit" class="btn btn-default">提交</button></label>
+          <div class="col-sm-10">
+	          {% if tips %}
+			  	<span style="color:#F00;">{{ tips }}</span>
+			  {% endif %}
+		  </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,32 @@
+<div id="rightsider">
+	<!-- 项目信息提示 -->
+	<div class="data_title">
+		<p>
+			<b>{{ program.name }}&nbsp;&nbsp;{{ locale.name }}</b>&nbsp;&nbsp;&nbsp;&nbsp;
+			<span style="color:#390;"><b>你好，[&nbsp;{{ user.last_name }}{{ user.first_name }}&nbsp;]</b></span>&nbsp;&nbsp;&nbsp;&nbsp;
+			<a href="/alter_password/">修改密码</a>&nbsp;&nbsp;
+			<a href="/quity/">注销</a>&nbsp;&nbsp;
+		</p>
+	</div>
+
+	<div class="data_title">
+		{% if sheet %}
+			<p>
+				<span style="float:left;">&nbsp;&nbsp;<b>{{ sheet.intro }}({{ sheet.name }})</b></span>
+			</p>
+		{% else %}
+			<p>
+				<span style="float:left;">&nbsp;&nbsp;<b>请在左边栏选择操作</b></span>
+			</p>
+		{% endif %}
+		
+	</div>
+	
+	<!-- 导入需要的HTML文件 -->
+    {% if html_path %}
+   		{% include html_path %}
+   	{% else %}
+   		{% include "right_default.html" %}
+    {% endif %}
+	
+</div>

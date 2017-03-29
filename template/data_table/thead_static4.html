@@ -1,0 +1,223 @@
+<html>  
+<head>  
+<title>Untitled Document</title>  
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">  
+</head>  
+<script>  
+function syncscroll(obj)  
+{  
+ //y.innerHTML = obj.scrollTop;  
+ //x.innerHTML = obj.scrollLeft;  
+ scroll1.children[0].style.position = "relative";  
+ scroll2.children[0].style.position = "relative";  
+ scroll1.children[0].style.left = "-"+obj.scrollLeft;  
+ scroll2.children[0].style.top =  "-"+obj.scrollTop;  
+   
+}  
+</script>  
+<body>  
+<table border="0" cellpadding="0" cellspacing="0">  
+  <tr>  
+    <td>  
+  <!--*********左上-BEGIN***********-->  
+  
+  <table width="240" height="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#666666">  
+   <colgroup>  
+   <col width="80" >  
+   <col width="80" >  
+   <col width="80" >  
+   </colgroup>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">列1</td>  
+   <td>列2</td>  
+   <td>列3</td>  
+    </tr>  
+  </table>  
+  
+  <!--**************左上-END**********-->  
+ </td>  
+    <td>  
+ <div id='scroll1' style="width:450;overflow:hidden ">  
+  <!--***********右上-BEGIN********-->  
+  
+  <table style="width:900 " height="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#666666">  
+   <colgroup>  
+   <col width="150" >  
+   <col width="150" >  
+   <col width="150" >  
+   <col width="150" >  
+   <col width="150" >  
+   </colgroup>  
+    <tr bgcolor="#FFFFFF">  
+   <td>列4</td>  
+   <td height="20">列5</td>  
+   <td>列6</td>  
+   <td>列7</td>  
+   <td>列8</td>  
+    </tr>  
+  </table>  
+  
+  <!--************右上-END**********-->  
+ </div>   
+ </td>  
+  </tr>  
+  <tr>  
+    <td align="left" valign="top">  
+ <div id='scroll2' style="height:150;overflow-y:hidden;overflow-x:scroll">  
+  <!--*************左下-BEGIN**************-->  
+  
+  <table width="240" height="100%" border="0" cellpadding="0" cellspacing="1" bgcolor="#666666">  
+   <colgroup>  
+   <col width="80" >  
+   <col width="80" >  
+   <col width="80" >  
+   </colgroup>  
+  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+  </table>  
+  
+  <!--*************左下-END***********-->  
+ </div>  
+ </td>  
+    <td align="left" valign="top">  
+ <div style="width:450;height:150;overflow:scroll " onscroll="javascript:syncscroll(this)">  
+  <!--***********右下-BEGIN***********-->  
+  
+  <table style="width:900 " height="100" border="0" cellpadding="0" cellspacing="1" bgcolor="#666666">  
+  <colgroup>  
+  <col width="150" >  
+  <col width="150" >  
+  <col width="150" >  
+  <col width="150" >  
+  <col width="150" >  
+  </colgroup>  
+    <tr bgcolor="#FFFFFF">  
+   <td width="100" height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+    <tr bgcolor="#FFFFFF">  
+   <td height="20">&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+   <td>&nbsp;</td>  
+    </tr>  
+  </table>  
+  
+  <!--*************右下-END*****************-->  
+ </div>  
+ </td>  
+  </tr>  
+</table>  
+<p id="y">&nbsp;</p>  
+<p id="x">&nbsp;</p>  
+</body>  
+</html>  

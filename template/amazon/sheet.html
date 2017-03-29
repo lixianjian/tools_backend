@@ -1,0 +1,253 @@
+<script LANGUAGE="JavaScript">
+// Example: obj = findObj("image1");
+function findObj(theObj, theDoc)
+{ 
+	var p, i, foundObj; 
+	if(!theDoc)
+		theDoc = document; 
+	if((p = theObj.indexOf("?")) > 0 && parent.frames.length) {   
+		theDoc = parent.frames[theObj.substring(p+1)].document;
+		theObj = theObj.substring(0,p);
+	}
+	if(!(foundObj = theDoc[theObj]) && theDoc.all)
+		foundObj = theDoc.all[theObj];
+	for (i=0; !foundObj && i < theDoc.forms.length; i++)
+		foundObj = theDoc.forms[i][theObj];
+	for(i=0; !foundObj && theDoc.layers && i < theDoc.layers.length; i++)
+		foundObj = findObj(theObj,theDoc.layers[i].document);
+	if(!foundObj && document.getElementById)
+		foundObj = document.getElementById(theObj);
+	return foundObj;
+}
+
+function check_json(tag_id,tag_name,tips) {
+	var tag_obj = findObj(tag_id,document);
+	var val1 = tag_obj.value;
+	if (val1 == "") {
+		tag_obj.value = "[]";
+		alert("JSON字符串为空");
+		return false;
+	}
+	else {
+		var j = val1;
+		try {
+			j = JSON.parse(val1);
+		} catch (e) {
+			alert(tag_name+"：【"+val1+"】不是正确的JSON字符串，请检查");
+			return false;
+		}
+		/*for (var i=j.length-1; i>=0; i--){
+			var j_type = typeof(j[i]);
+			//alert(j_type);
+			if (j_type == "object"){
+				alert("JSON数组中不能有字典、数组类型");
+				return false;
+			}
+		}*/
+		if (tips != null) {
+			tips = "JSON格式正确"+tips;
+		}
+		else {
+			tips = "JSON格式正确";
+		}
+		if (confirm(tips)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+}
+
+var foreigns = JSON.parse('{{ foreigns|safe }}');
+
+//添加行
+function AddSignRow(frame,trlastindex,trname,tb_name,field_name){
+	//alert(frame);
+	//alert("trlastindex："+trlastindex);
+	//读取最后一行的行号，存放在txtTRLastIndex文本框中 
+	var txtTRLastIndex = findObj(trlastindex,document);
+	var rowID = parseInt(txtTRLastIndex.value);
+	//alert(rowID);
+	var signFrame = findObj(frame,document);
+	//alert(signFrame);
+	//添加行
+	var newTR = signFrame.insertRow(signFrame.rows.length);
+	newTR.id = trname + rowID;
+	
+	//操作字段所在索引
+	var lastTdIndex = 0;
+	//添加列:序号
+	var newNameTD=newTR.insertCell(lastTdIndex++);
+	//添加列内容
+	newNameTD.innerHTML = newTR.rowIndex.toString();
+	
+	//添加列:外键
+	var newForeignTD=newTR.insertCell(lastTdIndex++);
+	alert(foreigns);
+	var v1 = foreigns[tb_name];
+	//添加列内容
+	var html1 = "";
+	
+	var html1 = "<select name='"+ field_name + rowID + "' id='id_" + field_name + rowID + "' style='width:150px;height:20px;'>";
+	html1 += "<option value='0'>请选择一个值</option>";
+	for (var i1 = 0; i1 < v1.length; i1++) {
+		html1 += "<option value='" + v1[i1][0] + "'>" + v1[i1][1] + "</option>";
+	}
+    html1 += "</select>";
+	newForeignTD.innerHTML = html1;
+	
+	//添加列:删除按钮
+	var newDeleteTD=newTR.insertCell(lastTdIndex);
+	//添加列内容
+	newDeleteTD.innerHTML = "<div align='center' style='width:40px'><a href='javascript:;' onclick=\"DeleteSignRow('"+frame+"','"+trname+rowID+"','id_"+field_name+'_status'+rowID + "')\">删除</a></div>";
+	
+	//将行号推进下一行
+	txtTRLastIndex.value = (rowID + 1).toString();
+	//alert(txtTRLastIndex.value);
+}
+
+//删除指定行
+function DeleteSignRow(frame,rowid){
+	var signFrame = findObj(frame,document);
+	var signItem = findObj(rowid,document);
+	
+	//获取将要删除的行的Index
+	var rowIndex = signItem.rowIndex;
+	
+	//删除指定Index的行
+	signFrame.deleteRow(rowIndex);
+	
+	//重新排列序号，如果没有序号，这一步省略
+	for(i=rowIndex;i<signFrame.rows.length;i++){
+		signFrame.rows[i].cells[0].innerHTML = i.toString();
+	}
+}
+
+//清空列表
+function ClearAllSign(frame,trlastindex,trname){
+	if(confirm('确定要清空所有数据吗？')){
+		var signFrame = findObj(frame,document);
+		var rowscount = signFrame.rows.length;
+		
+		//循环删除行,从最后一行往前删除
+		for(i=rowscount - 1;i > 0; i--){
+		   signFrame.deleteRow(i);
+		}
+		
+		//重置最后行号为1
+		var txtTRLastIndex = findObj(trlastindex,document);
+		txtTRLastIndex.value = "1";
+		
+		//预添加一行
+		AddSignRow(frame,trlastindex,trname);
+	}
+}
+
+var checked = false;
+function checkAll(value) 
+{
+	if (checked)
+		checked = false;
+	else
+		checked = true;
+	var code_Values = document.all[value]; 
+	if(code_Values.length){ 
+		for(var i=0;i<code_Values.length;i++) 
+		{ 
+			code_Values[i].checked = checked; 
+		} 
+	}else{ 
+		code_Values.checked = checked;
+	} 
+}
+
+function is_check(value) 
+{
+	var checked = false;
+	var code_Values = document.all[value]; 
+	if(code_Values.length){ 
+		for(var i=0;i<code_Values.length;i++) 
+		{ 
+			if (code_Values[i].checked){
+				if (confirm("确认要删除？")){
+					return true;
+				}
+				else
+					return false;
+			}
+		} 
+	}
+	alert("请先选择要删除的记录复选框！");
+	return false;
+}
+
+
+{% if perms.auth.modify_mapdata %}
+	var allow = "true";
+{% else %}
+	var allow = "false";
+{% endif %}
+function view_all_event(){
+	var view_all = document.getElementById("id_view_all").checked;
+	if (view_all){
+		window.location.href = '/{{ app }}/{{ view_func.name }}/get/?view_all=1&o={{ order|default:"" }}';
+	}
+	else {
+		window.location.href = '/{{ app }}/{{ view_func.name }}/get/?view_all=0&o={{ order|default:"" }}';
+	}
+}
+
+function excport_csv_event(){
+	var excport_csv = document.getElementById("id_excport_csv").checked;
+	if (excport_csv){
+		window.location.href = '/{{ app }}/{{ view_func.name }}/get/?excport_csv=1';
+	}
+	else {
+		window.location.href = '/{{ app }}/{{ view_func.name }}/get/?excport_csv=0';
+	}
+}
+</script>
+<div class="panel panel-default">
+<!-- Default panel contents -->
+{% if do_what == 'get' %}
+	<div class="panel-heading">
+		{%include 'amazon/table_nav.html' %}
+	</div>
+	
+	<div class="table-responsive">
+		<table class="table table-bordered">
+        	<thead>
+			<tr>
+				<th>编辑</th>
+				{% for field in title %}
+					<th>{{ field|safe }}</th>
+				{% endfor %}
+				<th>删除</th>
+				<th><a href="javascript:void();" onclick="javascript:checkAll('recordids')">全选</a></th>
+			</tr>
+			{{ temp_html|safe }}
+			</thead>
+			<tbody>
+		</table>
+	</div>
+{% else %}
+	<div id="form_table">
+		<form action="/{{ app }}/{{ view_func.name }}/{{ do_what }}/?page={{ page|default:'1' }}&recordid={{ recordid|default:'0' }}&jspost=1" method="post">{%csrf_token%}
+			<table style="border:1px solid <!-- 000;" class="regist_table">
+				{{ temp_html|safe }}
+		    	<tr>
+		    		<td class="right_td">
+		    			<input type='submit' value='提交' class="btn" onclick="{{ js_str|safe }}"/>
+		    		</td>
+		    		<td class="left_td">
+		    			{% if tips %}
+							<span style="color:#F00;">{{ tips }}</span>
+						{% endif %}
+		    		</td>
+		    	</tr>
+			</table>
+	    </form>
+	</div>
+{% endif %}
+</div>

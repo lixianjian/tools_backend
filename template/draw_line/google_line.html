@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load('visualization', '1');
+      google.setOnLoadCallback(drawVisualization);
+
+      function drawVisualization() {
+        var wrapper = new google.visualization.ChartWrapper({
+          chartType: 'LineChart',
+          dataTable: [['', 'Germany', 'USA', 'Brazil', 'Canada', 'France', 'RU'],
+                      ['', 700, 300, 400, 500, 600, 800],
+                      ['', 600, 200, 300, 400, 500, 700]],
+          query: 'SELECT A,D WHERE D > 100 ORDER BY D',
+          options: {'title': 'Countries'},
+          containerId: 'vis_div'
+        });
+        wrapper.draw()
+
+        // No query callback handler needed!
+      }
+    </script>
+  </head>
+  <body style="font-family: Arial;border: 0 none;">
+    <div id="vis_div" style="width: 600px; height: 400px;"></div>
+  </body>
+</html>
