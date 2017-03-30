@@ -13,14 +13,22 @@ tools_backend
 使用方法
 ===============
 
-  * 本项目支持python2.7，不支持python3以上版本<br/>
-　* 安装相关依赖<br/>
-　　　pip install requirements.txt<br/>
-  * 启动<br/>
-  　　python project_ctrl.py start -u (启动用户)　-p (uwsgi占用端口)<br/>
-  * 停止<br/>
-  　　pytohn project_ctrl.py stop<br/>
-  * 重启<br/>
+  * 本项目支持python2.7，不支持python3以上版本
+
+  * 安装相关依赖
+
+    pip install requirements.txt
+
+  * 启动
+
+  　　python project_ctrl.py start -u (启动用户)　-p (uwsgi占用端口)
+
+  * 停止
+
+  　　pytohn project_ctrl.py stop
+
+  * 重启
+
   　　pytohn project_ctrl.py restart -u (启动用户)　-p (uwsgi占用端口)
 
 
