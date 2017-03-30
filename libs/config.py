@@ -1,5 +1,5 @@
 #!/usr/bin/python2.7
-#coding=utf-8
+# coding=utf-8
 '''
 Created on 2012-08-12
 
@@ -8,53 +8,53 @@ Created on 2012-08-12
 
 from multi_locale import glocale
 
-####################### 项目启动配置 #############################
-#uwsgi日志目录
-UWSGI_LOG_PATH  = '/opt/darkhutgame/uwsgi_log/support/toos_backend'
-#uwsgi端口
-UWSGI_PORT  = 39181
-#静态资源目录
+# ###################### 项目启动配置 #############################
+# uwsgi日志目录
+UWSGI_LOG_PATH = '/opt/darkhutgame/uwsgi_log/support/toos_backend'
+# uwsgi端口
+UWSGI_PORT = 39181
+# 静态资源目录
 STATIC_PATH = '/usr/local/lib/python2.7/site-packages/django/contrib/admin/static/'
 
-#调试状态
-DEBUG   = False
-#分页时每页数据的记录数量
-PER_PAGE= 50
-#ASSETS资源下载URL
-ASSETS_URL  = 'http://220.dhh.darkhutgame.net:8080/tb_assets'
-#概率数组为
-COMBOS  = ['0.1','0.5','1.0','2.0','4.0','8.0','16.0','30.0']
-#后台调试即时修改文件
-PARAM_DEBUG_PATH= '/data/kashen1/param_debug.txt'
-#参数表程序自动添加字段
-BASE_AUTO_ADD_FIELD = ['id','deleted','createtime','username']
-AUTO_ADD_FIELD  = ['create','operator']
+# 调试状态
+DEBUG = False
+# 分页时每页数据的记录数量
+PER_PAGE = 50
+# ASSETS资源下载URL
+ASSETS_URL = 'http://220.dhh.darkhutgame.net:8080/tb_assets'
+# 概率数组为
+COMBOS = ['0.1', '0.5', '1.0', '2.0', '4.0', '8.0', '16.0', '30.0']
+# 后台调试即时修改文件
+PARAM_DEBUG_PATH = '/data/kashen1/param_debug.txt'
+# 参数表程序自动添加字段
+BASE_AUTO_ADD_FIELD = ['id', 'deleted', 'createtime', 'username']
+AUTO_ADD_FIELD = ['create', 'operator']
 AUTO_ADD_FIELD.extend(BASE_AUTO_ADD_FIELD)
-#表自动添加字段
-AUTO_ADD_FIELD2 = ['create','operator','deleted','createtime','username']
-#数字正则式
-NUMBER_STR  ='\d{1,9}'
-#时间正则表达式，如：2012-07-26 17:22:22
-TIME_RE_STR ='\d{4}-\d{2}-\d{2}\s{1}\d{2}:\d{2}:\d{2}'
-#日期正则表达式，如：2012-07-26
-DATE_RE_STR ='\d{4}-\d{2}-\d{2}'
-#浮点正则表达式
-FLOAT_STR   = '(\d+)(\.\d+)'
-#登陆后默认跳转页面
-DEFAULT_LOGIN_PATH  = '/index/'
-#启动的应用
+# 表自动添加字段
+AUTO_ADD_FIELD2 = ['create', 'operator', 'deleted', 'createtime', 'username']
+# 数字正则式
+NUMBER_STR = '\d{1,9}'
+# 时间正则表达式，如：2012-07-26 17:22:22
+TIME_RE_STR = '\d{4}-\d{2}-\d{2}\s{1}\d{2}:\d{2}:\d{2}'
+# 日期正则表达式，如：2012-07-26
+DATE_RE_STR = '\d{4}-\d{2}-\d{2}'
+# 浮点正则表达式
+FLOAT_STR = '(\d+)(\.\d+)'
+# 登陆后默认跳转页面
+DEFAULT_LOGIN_PATH = '/index/'
+# 启动的应用
 APPLICATION = 'parameters'
-#protobuf文件存放目录
-PROTOBUF_PATH   = '/opt/darkhutgame/cgame/cgame_shared/protobuf/'
-#系统标题
-SYSTEM_TITLE    = '租用服务器'
-#特殊权限处理字段{table: {field: permission}}
-SPEC_PERM_FIELDS= {}
+# protobuf文件存放目录
+PROTOBUF_PATH = '/opt/darkhutgame/cgame/cgame_shared/protobuf/'
+# 系统标题
+SYSTEM_TITLE = '租用服务器'
+# 特殊权限处理字段{table: {field: permission}}
+SPEC_PERM_FIELDS = {}
 
-#===============================================================================
+# =========================================================================
 # 亚马逊租用服务器配置
-#===============================================================================
-#逻辑服服务器端配置
+# =========================================================================
+# 逻辑服服务器端配置
 SVR_CONFIG_FILE = """[server]
 ;平台
 plat_form = %(platform)s
@@ -86,7 +86,7 @@ level = %(level)s
 ;log是否以屏幕方式输出
 stdout = %(stdout)s
 """
-#nginx配置
+# nginx配置
 NGINX_CONFIG = """server {
     listen       80;
     server_name  %(domain)s;
@@ -123,8 +123,8 @@ server {
 }
 """
 
-#接口页面配置
-WEB_CONFIG  = """#coding=utf-8
+# 接口页面配置
+WEB_CONFIG = """#coding=utf-8
 '''
 存放需要在部署服务器的时候修改的参数,每个服务器不一样,会被var_local.py覆盖掉
 被页面程序和服务器程序同时需要,web服务和游戏服务器都使用这一个配置文件
@@ -178,14 +178,14 @@ CREATE_MOBILEID = False
 
 """
 
-#数据库名称
-BS_DB_NAME  = 'tools_backend.db'
-#项目目录
-PROGRAM_PATH= '/opt/darkhutgame/support/tools_backend/cgame/tools_backend'
-#下载文件临时（中转）目录
-DOWNLOAD_PATH   = '/data/download'
-#数据根目录
-BASE_DATA_PATH  = '/data'
+# 数据库名称
+BS_DB_NAME = 'tools_backend.db'
+# 项目目录
+PROGRAM_PATH = '/opt/darkhutgame/support/tools_backend/cgame/tools_backend'
+# 下载文件临时（中转）目录
+DOWNLOAD_PATH = '/data/download'
+# 数据根目录
+BASE_DATA_PATH = '/data'
 
 import os
 ctf = os.path.dirname(os.path.abspath(__file__))
