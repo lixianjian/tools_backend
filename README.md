@@ -35,4 +35,4 @@ tools_backend
 注意
 ===============
 
-该项目使用的是django１.4.5版本，数据库动态更新使用的是south框架，所以在django1.7以上版本无法运行，需要修改成migrations的方式。
+该项目使用的是django1.4.5版本，数据库动态更新使用的是south框架，所以在django1.7以上版本无法运行，需要修改成migrations的方式。
