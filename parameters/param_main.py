@@ -29,7 +29,7 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.forms.models import model_to_dict
-from south.db import db
+# from south.db import db
 from django.db import connection
 
 from libs import public
@@ -64,76 +64,56 @@ DATE_RE_STR = '\d{4}-\d{2}-\d{2}'
 # 浮点正则表达式
 FLOAT_STR = '(\d+)(\.\d+)'
 
+
 def create_db_table(record, model_class, suffix=''):
     """ Takes a Django model class and create a database table, if necessary.
     """
     # XXX Create related tables for ManyToMany etc
-    db.start_transaction()
     table_name = model_class._meta.db_table
     if suffix:
         table_name += suffix
+        model_class._meta.db_table = table_name
     # Introspect the database to see if it doesn't already exist
-    if (connection.introspection.table_name_converter(table_name) not in connection.introspection.table_names()):
+    if (connection.introspection.table_name_converter(table_name) not in
+            connection.introspection.table_names()):
         fields = [(f.name, f.get_django_field()) for f in record.fields.all()]
         if DEBUG:
             print fields
-        db.create_table(table_name, fields)
+        # from django.db.backends.base.schema import BaseDatabaseSchemaEditor
+        with connection.schema_editor() as schema_editor:
+            schema_editor.create_model(model_class)
         # Some fields are added differently, after table creation
         # eg GeoDjango fields
-        db.execute_deferred_sql()
         print "Created table '%s'" % table_name
-    db.commit_transaction()
 
 
 def delete_db_table(model_class):
     table_name = model_class._meta.db_table
-    db.start_transaction()
-    db.delete_table(table_name)
+    with connection.schema_editor() as schema_editor:
+        schema_editor.delete_model(model_class)
     print "Deleted table '%s'" % table_name
-    db.commit_transaction()
 
 
-def add_db_table_column(model_class, field_name, field):
+def add_db_table_column(model_class, field):
     table_name = model_class._meta.db_table
-    db.start_transaction()
-    # db.delete_table(table_name)
-    db.add_column(table_name, field_name, field)
-    print "table '%s' add colum %s" % (table_name, field_name)
-    db.commit_transaction()
+    with connection.schema_editor() as schema_editor:
+        schema_editor.add_field(model_class, field)
+    print "table '%s' add colum %s" % (table_name, field)
 
 
 def alter_db_table_column(model_class, field_name, field):
     print 'in alter_db_table_column'
     table_name = model_class._meta.db_table
-    db.start_transaction()
-    db.alter_column(table_name, field_name, field)
+    with connection.schema_editor() as schema_editor:
+        schema_editor.alter_field(model_class, field_name, field)
     print "table '%s' alter colum %s" % (table_name, field_name)
-    db.commit_transaction()
 
 
 def delete_db_table_column(model_class, field_name, field_type):
     table_name = model_class._meta.db_table
-    db.start_transaction()
-    if field_type == 'ForeignKey':
-        db.delete_foreign_key(table_name, field_name)
-    elif field_type == 'AutoField':
-        db.delete_primary_key(table_name)
-    else:
-        db.delete_column(table_name, field_name)
+    with connection.schema_editor() as schema_editor:
+        schema_editor.delete_field(model_class, field_name)
     print "table '%s' delete colum %s" % (table_name, field_name)
-    db.commit_transaction()
-
-
-def rename_db_table_column(model_class, field_name, new_name, field_type=''):
-    table_name = model_class._meta.db_table
-    db.start_transaction()
-    db.rename_column(table_name, field_name, new_name)
-    if field_type == 'ForeignKey':
-        #db.rename_column(table_name, field_name+'_id', new_name+'_id')
-        db.add_column(table_name, new_name + '_id',
-                      models.IntegerField(verbose_name=new_name + '_id', blank=True, null=True))
-    db.commit_transaction()
-    print "table '%s' rename colum %s to %s" % (table_name, field_name, new_name)
 
 
 def get_contact(obj, **kwargs):
@@ -151,8 +131,8 @@ def get_sheets(program=None, locale=None):
     for sheet in Sheet.objects.filter(program=program, locale=locale):
         sys_markid = sheet.sys_model.markid
         sys_markid2 = sheet.sys_model2.markid
-        if sheets.has_key(sys_markid):
-            if sheets[sys_markid]['sub_sheets'].has_key(sys_markid2):
+        if sys_markid in sheets:
+            if sys_markid2 in sheets[sys_markid]['sub_sheets']:
                 sheets[sys_markid]['sub_sheets'][
                     sys_markid2]['sub_sheets2'].append(sheet)
             else:
@@ -160,7 +140,8 @@ def get_sheets(program=None, locale=None):
                     'sys_model2': sheet.sys_model2, 'sub_sheets2': [sheet]}
         else:
             sheets[sys_markid] = {'sys_model': sheet.sys_model, 'sub_sheets': {
-                sys_markid2: {'sys_model2': sheet.sys_model2, 'sub_sheets2': [sheet]}}}
+                sys_markid2: {'sys_model2': sheet.sys_model2,
+                              'sub_sheets2': [sheet]}}}
     # print sheets
     return sheets.values()
 
@@ -1932,15 +1913,16 @@ class ParamMain():
                 f_obj = Field2(**f)
                 f_obj.save()
 #                i   += 1
-            create_db_table(db_obj, db_obj.get_django_model())
+            # create_db_table(db_obj, db_obj.get_django_model())
+            create_db_table(db_obj.get_django_model())
         elif self.sheetid == 'formula':
             pass
         else:
-            #            if self.dyn_model.num > 0:
-            #                db_obj.sn   = self.dyn_model.num + db_obj.id-1
-            ##                db_obj.sn   = self.dyn_model.num
-            #                db_obj.save()
-            ##                self.dyn_model.num  += 1
+            # if self.dyn_model.num > 0:
+            #     db_obj.sn   = self.dyn_model.num + db_obj.id-1
+            #     # db_obj.sn   = self.dyn_model.num
+            #     db_obj.save()
+            #     # self.dyn_model.num  += 1
             # self.dyn_model.save()
             # for k,v in self.manytomanys.items():
             # setattr(db_obj,k,v)
@@ -1998,69 +1980,60 @@ class ParamMain():
                                 if status == 2:
                                     # 删除
                                     # 原字段名
-                                    #                                    field_name  = f_objs[0].name
-                                    #                                    field_type  = f_objs[0].type.name
+                                    # field_name  = f_objs[0].name
+                                    # field_type  = f_objs[0].type.name
                                     f_objs[0].delete()
-#                                    delete_db_table_column(django_model, field_name, field_type)
                                     pass
                                 else:
                                     # 修改
                                     # 原字段名
                                     field_name = f_objs[0].name
                                     field_type = f_objs[0].type.name
-#                                    if f['name'] != field_name:
-#                                        rename_db_table_column(django_model, field_name, f1['name'], field_type=f_objs[0].type.name)
                                     # 修改Field2表记录
                                     f_objs.update(**f)
-#                                    print 'field_name:',field_name
-#                                    #修改对应表的字段
-#                                    alter_db_table_column(django_model,field_name,f_objs[0].get_django_field())
                                     if f['type'].name == 'ForeignKey':
                                         if field_type == 'ForeignKey':
                                             new_fields.append(
                                                 f['name'] + '_id')
                                             old_fields.append(
                                                 field_name + '_id')
-                                            try:
-                                                db.delete_index(
-                                                    django_model._meta.db_table, [field_name])
-                                            except:
-                                                pass
-#                                        else:
-#                                            new_foreign_keys.append(f['name']+'_id')
-#                                        print 'new_fields: ', new_fields
-#                                        print 'old_fields: ', old_fields
                                     else:
                                         new_fields.append(f['name'])
                                         old_fields.append(field_name)
+
             if modified:
                 t1 = '%d' % time.time()
-                create_db_table(db_obj, django_model, suffix='_' + t1)
+                # create_db_table(db_obj, django_model, suffix='_' + t1)
+                create_db_table(copy.copy(django_model), suffix='_' + t1)
                 table_name = django_model._meta.db_table
-# print 'INSERT INTO %s(%s) select %s from
-# %s'%(table_name+'_'+t1,','.join(new_fields),','.join(old_fields),
-# table_name)
-                db.execute('INSERT INTO %s(%s) select %s from %s' % (
-                    table_name + '_' + t1, '"' + '","'.join(new_fields) + '"', '"' + '","'.join(old_fields) + '"', table_name))
-#                for f2 in new_foreign_keys:
-#                    print 'update %s set %s=0'%(table_name+'_'+t1,f2)
-#                    db.execute('update %s set %s=0'%(table_name+'_'+t1,f2))
-                db.execute('drop table %s' % table_name)
-                db.execute('alter table %s rename to %s' %
-                           (table_name + '_' + t1, table_name))
-#                if new_fields2:
-#                    print 'update %s set %s'%(table_name+'_'+t1,'="" '.join(new_fields2))
-#                    db.execute('update %s set %s'%(table_name+'_'+t1,'="" '.join(new_fields2)))
-#                #添加字段表记录
-#                f_obj   = Field2(**f)
-#                f_obj.save()
+                # print 'INSERT INTO %s(%s) select %s from
+                # %s'%(table_name+'_'+t1,','.join(new_fields),','.join(old_fields),
+                # table_name)
+                with connection.schema_editor() as schema_editor:
+                    schema_editor.execute(
+                        'INSERT INTO %s(%s) select %s from %s' % (
+                            table_name + '_' + t1, '"' +
+                            '","'.join(new_fields) + '"', '"' +
+                            '","'.join(old_fields) + '"', table_name))
+                    # for f2 in new_foreign_keys:
+                    # print 'update %s set %s=0'%(table_name+'_'+t1,f2)
+                    # schema_editor.execute('update %s set %s=0'%(table_name+'_'+t1,f2))
+                    schema_editor.execute('drop table %s' % table_name)
+                    schema_editor.execute('alter table %s rename to %s' %
+                                          (table_name + '_' + t1, table_name))
+                    # if new_fields2:
+                    #     print 'update %s set %s'%(table_name+'_'+t1,'="" '.join(new_fields2))
+                    #     schema_editor.execute('update %s set %s'%(table_name+'_'+t1,'="" '.join(new_fields2)))
+                    #     #添加字段表记录
+                    #     f_obj   = Field2(**f)
+                    #     f_obj.save()
             # create_db_table(db_obj,db_obj.get_django_model())
         else:
-            #            if self.dyn_model.num > 0:
-            #                db_obj.sn   = self.dyn_model.num
-            #                db_obj.save()
-            #                self.dyn_model.num  += 1
-            #                self.dyn_model.save()
+            #  if self.dyn_model.num > 0:
+            #      db_obj.sn   = self.dyn_model.num
+            #      db_obj.save()
+            #      self.dyn_model.num  += 1
+            #      self.dyn_model.save()
             if self.dyn_model.num > 0 and not db_obj.sn:
                 db_obj.sn = int('%d%04d' % (self.dyn_model.id, db_obj.id))
                 db_obj.save()
@@ -2106,27 +2079,17 @@ class ParamMain():
                     self.sheet_obj, 10000, 1, deleted=False)
             datas = []
             for record in records:
-                #datas.append(model_to_dict(record, fields=self.pkeys))
+                #　datas.append(model_to_dict(record, fields=self.pkeys))
                 d1 = model_to_dict(record, exclude=AUTO_ADD_FIELD2)
                 d1['primary_id'] = d1.pop('id')
                 datas.append(d1)
         elif self.export_csv:
-            #paginator,contacts  = self.paging(self.sheet_obj,10000000,1,**self.achieves)
+            #　paginator,contacts  = self.paging(self.sheet_obj,10000000,1,**self.achieves)
             paginator = None
             datas = self.sheet_obj.objects.filter(deleted=False)
         else:
             paginator, datas = self.paging(
                 self.sheet_obj, pre_pages, page, deleted=False)
-#            print datas
-#        if public.objIsFull(datas):
-#            print help(datas[0])
-#            print datas[0].name.verbose_name
-#            print datas[0].name.__class__.__name__
-#            for k in datas[0]:
-#                help(k)
-#                break
-#                self.pkeys.append()
-#                self.pvalues.append()
         if self.sheetid != 'model' and self.reqmode != 'js' and not self.export_csv:
             public.print_str('view html start')
             t1 = time.time()
@@ -2255,16 +2218,16 @@ class ParamMain():
                         else:
                             self.temp_html += '%s' % v1
                     self.temp_html += '</td>'
-                #self.temp_html  += '<!-- 删除 -->'
+                # self.temp_html  += '<!-- 删除 -->'
                 self.temp_html += '<td>'
-                #self.temp_html  += '<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what=delete&recordid={{ data.id }}&page={{ datas.number }}">删除</a>'
-                self.temp_html  += '<a href="/parameters/%(pid)s/%(loc_id)s/%(sheet_name)s/?do_what=delete&recordid=%(recordid)s&page=%(number)s">删除</a>' % \
+                # self.temp_html  += '<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what=delete&recordid={{ data.id }}&page={{ datas.number }}">删除</a>'
+                self.temp_html += '<a href="/parameters/%(pid)s/%(loc_id)s/%(sheet_name)s/?do_what=delete&recordid=%(recordid)s&page=%(number)s">删除</a>' % \
                     {'pid': self.program.markid, 'loc_id': self.locale.markid,
                         'sheet_name': self.sheetid, 'recordid': d1.id, 'number': number}
                 self.temp_html += '</td>'
-                #self.temp_html  += '<!-- 多选删除 -->'
+                # self.temp_html  += '<!-- 多选删除 -->'
                 self.temp_html += '<td>'
-                #self.temp_html  += '<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what=delete&recordid={{ data.id }}&page={{ datas.number }}">删除</a>'
+                # self.temp_html  += '<a href="/parameters/{{ program.markid }}/{{ locale.markid }}/{{ sheet.name }}/?do_what=delete&recordid={{ data.id }}&page={{ datas.number }}">删除</a>'
                 self.temp_html += '<input type="checkbox" name="recordids" id="id_recordids_%(recordid)s" value="%(recordid)s"/>' % {
                     'recordid': d1.id}
                 self.temp_html += '</td>'
@@ -2317,7 +2280,7 @@ class ParamMain():
                     if f.type.name == 'ForeignKey':
                         html += '<select class="form-control" id="id_%(table)s_%(name)s" name="%(name)s">' % {
                             'name': f.name, 'table': table}
-                        #html  += '<select multiple class="form-control" id="id_%(name)s" name="%(name)s" style="width:150px;height:20px;">'%{'name': f.name}
+                        # html  += '<select multiple class="form-control" id="id_%(name)s" name="%(name)s" style="width:150px;height:20px;">'%{'name': f.name}
                         html += '<option value="0">请选择一个%s</option>' % to_obj.intro
                         for record in model_obj.objects.filter(deleted=False):
                             param1 = {'id': record.id, 'display': getattr(
@@ -2328,8 +2291,8 @@ class ParamMain():
                                 html += '<option value="%(id)s">%(display)s</option>' % param1
                         html += '</select>'
                     else:
-                        #                        html  += '%(sheetname)s<input id="id_%(field)s" name="%(field)s" style="width:150px;" value="%(value)s" type="hidden" />'% \
-                        #                        {'field': f.name, 'value': f.to, 'sheetname': to_obj.intro}
+                        #  html  += '%(sheetname)s<input id="id_%(field)s" name="%(field)s" style="width:150px;" value="%(value)s" type="hidden" />'% \
+                        #  {'field': f.name, 'value': f.to, 'sheetname': to_obj.intro}
                         # 于2014-07-01 15:36修改，显示成可添加状态
                         param1 = {'name': f.name, 'to': f.to, 'table': f.to}
                         html += '<p>'
@@ -2378,7 +2341,7 @@ class ParamMain():
                         html += '</p>'
             elif f.type.name == 'ManyForeignsField':
                 for to_obj, model_obj in self.foreign_keys[f.name]['to_obj']:
-                    #                    model_obj   = to_obj.get_django_model()
+                    # model_obj   = to_obj.get_django_model()
                     html  += '<p><span style="width:100px;">%(to_intro)s：</span><select id="id_%(table)s_%(name)s_%(to_name)s" name="%(name)s_%(to_name)s" style="width:250px;height:20px;">' % \
                         {'name': f.name, 'intro': f.intro, 'to_name':
                             to_obj.name, 'to_intro': to_obj.intro, 'table': table}
@@ -2401,7 +2364,7 @@ class ParamMain():
                 html += '<textarea id="id_%(table)s%(field)s" name="%(field)s" style="width:350px;height:120px;">%(value)s</textarea>' % {
                     'field': f.name, 'value': v1, 'table': table}
             elif f.type.name == 'JSONChar':
-                #                print f.name, v1
+                # print f.name, v1
                 html += '<input id="id_%(table)s_%(field)s" name="%(field)s" style="width:350px;" value=\'%(value)s\' type="text" />' % {
                     'field': f.name, 'value': v1, 'table': table}
                 html += '&nbsp;&nbsp;<a href="javascript:void();" onclick="javascript:check_json(\'id_%(field)s\',\'%(intro)s\');">检查JSON格式</a>' % {
@@ -2963,7 +2926,7 @@ class ParamMain():
             self.tips = '表【%s】不存在' % self.sheetname
         # 查看玩家反馈信息
         elif self.do_what == 'get':
-            #paginator,datas = self.paging(self.sheet_obj,PER_PAGE,page,deleted=False)
+            #　paginator,datas = self.paging(self.sheet_obj,PER_PAGE,page,deleted=False)
             paginator, datas = self.do_achieve_records(page)
             if self.export_csv:
                 public.print_str('make csv data start')

@@ -1,3 +1,4 @@
-django==1.4.5
+django>=1.7
 south==1.0.2
 psutil==5.2.1
+openpyxl==2.4.5
